@@ -401,11 +401,11 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             </div>
                                         )}
-                                        <div className="hidden sm:flex flex-col justify-center items-end">
+                                        <div className="hidden sm:flex items-center space-x-3">
                                             <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200 leading-tight whitespace-nowrap">{auth.user.name}</span>
-                                            <button onClick={() => setIsTierModalOpen(true)} className={`flex items-center space-x-1 mt-1 px-2 py-0.5 rounded-md ${currentTier.bg} transition-colors group cursor-help border border-zinc-200/50 dark:border-zinc-700/50`}>
-                                                <span className={`${currentTier.color} group-hover:scale-110 transition-transform scale-75`}>{currentTier.icon}</span>
-                                                <span className={`text-[10px] font-bold ${currentTier.color}`}>{currentTier.name}</span>
+                                            <button onClick={() => setIsTierModalOpen(true)} className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full ${currentTier.bg} transition-all duration-300 group cursor-help border border-zinc-200/50 dark:border-zinc-700/50 shadow-sm hover:shadow-md hover:-translate-y-0.5`}>
+                                                <span className={`${currentTier.color} group-hover:scale-110 transition-transform scale-90`}>{currentTier.icon}</span>
+                                                <span className={`text-[11px] font-bold ${currentTier.color}`}>{currentTier.name}</span>
                                             </button>
                                         </div>
                                         <div className="w-px h-5 md:h-6 bg-zinc-200 dark:bg-zinc-800 mx-1 md:mx-2 hidden sm:block"></div>
@@ -1003,30 +1003,38 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                             </div>
                             
                             {ipoCollection.length > 0 ? (
-                                <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-4">
                                     {ipoCollection.map((item, idx) => (
-                                        <div key={idx} className={`relative rounded-xl border p-2 flex flex-col items-center justify-center aspect-[3/4] overflow-hidden group transition-all duration-300
+                                        <div key={idx} className={`relative rounded-2xl border p-4 flex flex-col items-center justify-center aspect-[3/4] overflow-hidden group transition-all duration-300
                                             ${item.has_closed 
-                                                ? (item.net_profit > 0 ? 'border-amber-400 bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/10 shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] hover:-translate-y-1' 
-                                                : 'border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/50 grayscale hover:grayscale-0 opacity-70 hover:opacity-100')
-                                                : 'border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 border-dashed'
+                                                ? (item.net_profit > 0 ? 'border-amber-400 bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/40 dark:to-amber-800/20 shadow-[0_4px_20px_rgba(251,191,36,0.3)] hover:shadow-[0_8px_30px_rgba(251,191,36,0.5)] hover:-translate-y-1.5' 
+                                                : 'border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/50 grayscale hover:grayscale-0 opacity-75 hover:opacity-100 shadow-sm hover:shadow-md hover:-translate-y-1')
+                                                : 'border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 border-dashed hover:border-solid hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md hover:-translate-y-1'
                                             }
                                         `}>
                                             {item.has_closed && item.net_profit > 0 && (
-                                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/50 dark:via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] skew-x-12 z-10 pointer-events-none"></div>
+                                                <>
+                                                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-200/50 via-transparent to-transparent opacity-70"></div>
+                                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/60 dark:via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite] skew-x-12 z-10 pointer-events-none"></div>
+                                                </>
                                             )}
-                                            <div className="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center p-1 mb-2 z-0 relative shrink-0">
+                                            {item.has_closed && item.net_profit <= 0 && (
+                                                <svg className="absolute inset-0 w-full h-full text-zinc-300/30 dark:text-zinc-700/30 pointer-events-none" fill="none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                                    <path stroke="currentColor" strokeWidth="2" d="M10,0 L30,40 L15,50 L50,80 L40,100" />
+                                                </svg>
+                                            )}
+                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-zinc-800 shadow-md border-2 border-white/50 dark:border-zinc-700 flex items-center justify-center p-1.5 mb-3 z-0 relative shrink-0">
                                                 <img src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${item.stock.stock_code}`} alt={item.stock.stock_code} className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${item.stock.stock_code}&background=random&color=57534e`; }} loading="lazy" />
                                             </div>
-                                            <div className="text-xs font-black text-zinc-800 dark:text-zinc-200 z-0 text-center w-full truncate px-1">{item.stock.stock_code}</div>
+                                            <div className="text-sm font-black text-zinc-800 dark:text-zinc-100 z-0 text-center w-full truncate px-1 tracking-tight">{item.stock.stock_code}</div>
                                             
-                                            <div className="mt-1 text-[9px] font-bold z-0 text-center w-full">
+                                            <div className="mt-3 text-[10px] font-black z-0 text-center w-full flex justify-center">
                                                 {item.has_closed ? (
                                                     item.net_profit > 0 
-                                                        ? <span className="text-amber-700 dark:text-amber-400 bg-amber-200 dark:bg-amber-900/50 px-1.5 py-0.5 rounded-full inline-block">SHINY</span>
-                                                        : <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded-full inline-block">RETAK</span>
+                                                        ? <span className="flex items-center space-x-1 text-amber-700 dark:text-amber-400 bg-amber-200/80 dark:bg-amber-900/60 px-2 py-1 rounded-md shadow-sm border border-amber-300/50 dark:border-amber-700/50 backdrop-blur-sm"><svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> <span>SHINY</span></span>
+                                                        : <span className="flex items-center space-x-1 text-zinc-600 dark:text-zinc-400 bg-zinc-200 dark:bg-zinc-800/80 px-2 py-1 rounded-md shadow-sm border border-zinc-300/50 dark:border-zinc-700/50"><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> <span>RETAK</span></span>
                                                 ) : (
-                                                    <span className="text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-1.5 py-0.5 rounded-full inline-block">AKTIF</span>
+                                                    <span className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 bg-blue-100/80 dark:bg-blue-900/50 px-2 py-1 rounded-md shadow-sm border border-blue-200/50 dark:border-blue-800/50"><svg className="w-3.5 h-3.5 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> <span>AKTIF</span></span>
                                                 )}
                                             </div>
                                         </div>
