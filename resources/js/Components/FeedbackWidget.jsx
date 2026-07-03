@@ -37,7 +37,7 @@ export default function FeedbackWidget() {
     return (
         <>
             {/* Floating Button */}
-            <div className="fixed bottom-6 right-6 z-50">
+            <div className="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-50">
                 <button
                     onClick={() => setIsOpen(true)}
                     className="flex h-14 w-14 items-center justify-center rounded-full bg-gojek-500 text-white shadow-lg hover:bg-gojek-600 hover:scale-110 transition-all focus:outline-none focus:ring-4 focus:ring-gojek-500/30"

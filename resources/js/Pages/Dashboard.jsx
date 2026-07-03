@@ -826,7 +826,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                     if (ipoDetails) {
                                         Object.values(ipoDetails).forEach(details => {
                                             const ticker = details.ticker;
-                                            const ipo = (ipoCalendar || []).find(i => i.title?.includes(ticker) || i.ticker === ticker) || { id: ticker, ticker };
+                                            const ipo = (ipoCalendar || []).find(i => i.title?.includes(ticker) || i.ticker === ticker) || (activeIpos || []).find(i => i.ticker === ticker) || { id: ticker, ticker };
 
                                             const parseDate = (dStr) => {
                                                 if (!dStr) return null;
@@ -881,7 +881,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 {day && hasEvents && (
                                                     <div className="flex -space-x-1">
                                                         {uniqueIpos.slice(0, 3).map(({ ipo }) => (
-                                                            <img key={ipo.id} src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`} alt="Logo" loading="lazy" className="w-3.5 h-3.5 rounded-full border border-white dark:border-zinc-800 bg-white object-contain shadow-sm" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ipo.ticker?.substring(0, 2)}&background=000&color=fff`; }} />
+                                                            <img key={ipo.id} src={typeof ipo.id === 'number' ? `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}` : `https://ui-avatars.com/api/?name=${ipo.ticker?.substring(0, 2)}&background=000&color=fff`} alt="Logo" loading="lazy" className="w-3.5 h-3.5 rounded-full border border-white dark:border-zinc-800 bg-white object-contain shadow-sm" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ipo.ticker?.substring(0, 2)}&background=000&color=fff`; }} />
                                                         ))}
                                                         {uniqueIpos.length > 3 && <span className="w-3.5 h-3.5 rounded-full bg-zinc-200 dark:bg-zinc-700 border border-white dark:border-zinc-800 text-[7px] flex items-center justify-center text-zinc-600 dark:text-zinc-300 font-bold leading-none shadow-sm">+{uniqueIpos.length - 3}</span>}
                                                     </div>
@@ -901,7 +901,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                 return (
                                                                     <div key={ticker} className="flex items-center space-x-2">
                                                                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-px shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-sm">
-                                                                            <img src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`} alt="Logo" className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`; }} />
+                                                                            <img src={typeof ipo.id === 'number' ? `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}` : `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`} alt="Logo" className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`; }} />
                                                                         </div>
                                                                         <div className="flex-1 flex items-center justify-between space-x-3">
                                                                             <div className="font-black text-sm text-zinc-700 dark:text-zinc-200 leading-none">{ticker}</div>

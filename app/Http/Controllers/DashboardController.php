@@ -147,6 +147,7 @@ class DashboardController extends Controller
             return [
                 'id' => $sid->id,
                 'sid_name' => $sid->sid_name,
+                'broker_name' => $sid->broker_name,
                 'transactions' => $sid->transactions->map(function ($trx) {
                     return [
                         'id' => $trx->id,
@@ -157,6 +158,8 @@ class DashboardController extends Controller
                         'status' => $trx->status,
                         'stock' => $trx->stock ? [
                             'stock_code' => $trx->stock->stock_code,
+                            'current_price' => $trx->stock->current_price,
+                            'ipo_price' => $trx->stock->ipo_price,
                         ] : null,
                     ];
                 })
