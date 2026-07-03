@@ -969,7 +969,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             </Listbox>
                                         </div>
-                                        <div className="mt-8 flex space-x-3 pt-2">
+                                        <div className="mt-8 flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                             <button type="button" onClick={() => setIsSidModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                             <button type="submit" disabled={processingSid} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-gojek-600 hover:bg-gojek-700 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900 disabled:opacity-50">Simpan Akun</button>
                                         </div>
@@ -1086,7 +1086,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="mt-8 flex space-x-3 pt-2">
+                                        <div className="mt-8 flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                             <button type="button" onClick={() => setIsTrxModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                             <button type="submit" disabled={processingTrx} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-gojek-600 hover:bg-gojek-700 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900 disabled:opacity-50">Simpan Transaksi</button>
                                         </div>
@@ -1165,7 +1165,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             );
                                         })()}
-                                        <div className="flex space-x-3 pt-2">
+                                        <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                             <button type="button" onClick={() => setIsPriceModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                             <button type="submit" className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-gojek-600 hover:bg-gojek-700 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900">Simpan</button>
                                         </div>
@@ -1192,7 +1192,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                     </div>
                                     <Dialog.Title as="h3" className="text-xl font-extrabold leading-6 text-zinc-900 dark:text-white text-center mb-2">Hapus SID?</Dialog.Title>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center mb-6">Yakin mau hapus <strong className="text-zinc-900 dark:text-white">{targetSid?.sid_name}</strong>? Semua saham yang ada di dalam SID ini juga bakal ikut kehapus permanen loh.</p>
-                                    <div className="flex space-x-3 pt-2">
+                                    <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                         <button type="button" onClick={() => setIsDeleteSidModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                         <button type="button" onClick={submitDeleteSid} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-lg shadow-rose-200 dark:shadow-rose-900/50">Ya, Hapus Aja</button>
                                     </div>
@@ -1259,7 +1259,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             </Listbox>
                                         </div>
-                                        <div className="mt-8 flex space-x-3 pt-2">
+                                        <div className="mt-8 flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                             <button type="button" onClick={() => setIsEditSidModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                             <button type="submit" disabled={processingEditSid} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-gojek-600 hover:bg-gojek-700 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900 disabled:opacity-50">Simpan Perubahan</button>
                                         </div>
@@ -1286,7 +1286,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                     </div>
                                     <Dialog.Title as="h3" className="text-xl font-extrabold leading-6 text-zinc-900 dark:text-white text-center mb-2">Hapus Saham?</Dialog.Title>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400 text-center mb-6">Yakin mau hapus saham <strong className="text-zinc-900 dark:text-white">{targetTrx?.stock?.stock_code}</strong> dari SID ini?</p>
-                                    <div className="flex space-x-3 pt-2">
+                                    <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                         <button type="button" onClick={() => setIsDeleteTrxModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                         <button type="button" onClick={submitDeleteTrx} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-lg shadow-rose-200 dark:shadow-rose-900/50">Ya, Hapus Aja</button>
                                     </div>
@@ -1332,7 +1332,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="mt-8 flex space-x-3 pt-2">
+                                        <div className="mt-8 flex flex-col-reverse sm:flex-row gap-3 pt-2">
                                             <button type="button" onClick={() => setIsEditTrxModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
                                             <button type="submit" disabled={processingEditTrx} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-gojek-600 hover:bg-gojek-700 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900 disabled:opacity-50">Simpan Perubahan</button>
                                         </div>
@@ -1730,13 +1730,13 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             </div>
 
                                             {/* Footer Actions */}
-                                            <div className="p-5 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/50 shrink-0 flex justify-end space-x-3 rounded-b-[2rem]">
-                                                <a href={`https://e-ipo.co.id${selectedIpoDetails.links?.prospectus_summary}`} target="_blank" rel="noreferrer" className="px-5 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-xl text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm shadow-zinc-200/50 dark:shadow-none">
+                                            <div className="p-5 border-t border-zinc-100 dark:border-zinc-800/50 bg-zinc-50/50 dark:bg-zinc-900/50 shrink-0 flex flex-col sm:flex-row sm:justify-end gap-3 rounded-b-[2rem]">
+                                                <a href={`https://e-ipo.co.id${selectedIpoDetails.links?.prospectus_summary}`} target="_blank" rel="noreferrer" className="w-full sm:w-auto flex justify-center items-center px-5 py-2.5 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-xl text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors shadow-sm shadow-zinc-200/50 dark:shadow-none">
                                                     Prospektus Ringkas
                                                 </a>
-                                                <a href={`https://e-ipo.co.id${selectedIpoDetails.links?.order_page}`} target="_blank" rel="noreferrer" className="px-5 py-2.5 bg-gojek-600 dark:bg-gojek-500 text-white rounded-xl text-sm font-bold hover:bg-gojek-700 dark:hover:bg-gojek-600 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900/50 flex items-center space-x-2">
+                                                <a href={`https://e-ipo.co.id${selectedIpoDetails.links?.order_page}`} target="_blank" rel="noreferrer" className="w-full sm:w-auto flex justify-center items-center px-5 py-2.5 bg-gojek-600 dark:bg-gojek-500 text-white rounded-xl text-sm font-bold hover:bg-gojek-700 dark:hover:bg-gojek-600 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900/50 space-x-2">
                                                     <span>Pesan di e-IPO</span>
-                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                                    <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                                 </a>
                                             </div>
                                         </div>
