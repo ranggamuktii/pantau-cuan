@@ -1,25 +1,30 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AccountSidController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\StockController;
+use App\Http\Controllers\StockSyncController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\WrappedController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    return redirect()->route('login');
 });
 
-
-
-use App\Http\Controllers\DashboardController;
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-use App\Http\Controllers\AccountSidController;
-use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\StockSyncController;
+// Public wrapped route
+Route::get('/wrapped/{token}', [WrappedController::class, 'showPublic'])->name('wrapped.public');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Internal Wrapped
+    Route::get('/wrapped', [WrappedController::class, 'index'])->name('wrapped.index');
+
     Route::post('/sids', [AccountSidController::class, 'store'])->name('sids.store');
     Route::put('/sids/{sid}', [AccountSidController::class, 'update'])->name('sids.update');
     Route::delete('/sids/{sid}', [AccountSidController::class, 'destroy'])->name('sids.destroy');
