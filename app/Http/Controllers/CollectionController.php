@@ -16,8 +16,24 @@ class CollectionController extends Controller
             ->where('user_id', $user->id)
             ->get();
 
+        $secureAccountSids = $accountSids->map(function ($sid) {
+            return [
+                'id' => $sid->id,
+                'transactions' => $sid->transactions->map(function ($trx) {
+                    return [
+                        'id' => $trx->id,
+                        'status' => $trx->status,
+                        'net_profit' => $trx->net_profit,
+                        'stock' => $trx->stock ? [
+                            'stock_code' => $trx->stock->stock_code,
+                        ] : null,
+                    ];
+                })
+            ];
+        });
+
         return Inertia::render('Collection/Index', [
-            'accountSids' => $accountSids
+            'accountSids' => $secureAccountSids
         ]);
     }
 }

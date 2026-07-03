@@ -143,10 +143,30 @@ class DashboardController extends Controller
             }
         }
 
+        $secureAccountSids = $accountSids->map(function ($sid) {
+            return [
+                'id' => $sid->id,
+                'sid_name' => $sid->sid_name,
+                'transactions' => $sid->transactions->map(function ($trx) {
+                    return [
+                        'id' => $trx->id,
+                        'lots' => $trx->lots,
+                        'buy_price' => $trx->buy_price,
+                        'sell_price' => $trx->sell_price,
+                        'net_profit' => $trx->net_profit,
+                        'status' => $trx->status,
+                        'stock' => $trx->stock ? [
+                            'stock_code' => $trx->stock->stock_code,
+                        ] : null,
+                    ];
+                })
+            ];
+        });
+
         return Inertia::render('Dashboard', [
             'summary' => $summary,
             'charts' => $charts,
-            'accountSids' => $accountSids,
+            'accountSids' => $secureAccountSids,
             'emitenList' => $emitenList,
             'activeIpos' => $activeIpos,
             'ipoCalendar' => $ipoCalendar,
