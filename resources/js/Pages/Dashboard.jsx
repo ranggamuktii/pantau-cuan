@@ -648,20 +648,12 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                     <tr key={trx.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/50 transition-colors">
                                                                         <td className="px-6 py-4 whitespace-nowrap">
                                                                             <div className="flex items-center space-x-3">
-                                                                                {activeIpos?.some(ipo => ipo.ticker === stock.stock_code) ? (
-                                                                                    <img
-                                                                                        src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${activeIpos.find(ipo => ipo.ticker === stock.stock_code).id}`}
-                                                                                        alt={stock.stock_code}
-                                                                                        className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-700 object-contain bg-white"
-                                                                                        onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${stock.stock_code}&background=random&color=fff&size=128&font-size=0.35&bold=true`; }}
-                                                                                    />
-                                                                                ) : (
-                                                                                    <img
-                                                                                        src={`https://ui-avatars.com/api/?name=${stock.stock_code}&background=random&color=fff&size=128&font-size=0.35&bold=true`}
-                                                                                        alt={stock.stock_code}
-                                                                                        className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-700"
-                                                                                    />
-                                                                                )}
+                                                                                <img
+                                                                                    src={`https://assets.stockbit.com/logos/companies/${stock.stock_code}.png`}
+                                                                                    alt={stock.stock_code}
+                                                                                    className="w-8 h-8 rounded-full border border-zinc-200 dark:border-zinc-700 object-contain bg-white"
+                                                                                    onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }}
+                                                                                />
                                                                                 <span className="font-bold text-zinc-800 dark:text-zinc-100">{stock.stock_code}</span>
                                                                             </div>
                                                                         </td>
@@ -763,7 +755,17 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
                                                                 {sid.transactions.filter(t => t.status === 'closed').map(trx => (
                                                                     <tr key={trx.id}>
-                                                                        <td className="px-4 py-3 font-bold text-zinc-700 dark:text-zinc-300">{trx.stock.stock_code}</td>
+                                                                        <td className="px-4 py-3 whitespace-nowrap">
+                                                                            <div className="flex items-center space-x-3">
+                                                                                <img
+                                                                                    src={`https://assets.stockbit.com/logos/companies/${trx.stock.stock_code}.png`}
+                                                                                    alt={trx.stock.stock_code}
+                                                                                    className="w-6 h-6 rounded-full border border-zinc-200 dark:border-zinc-700 object-contain bg-white"
+                                                                                    onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }}
+                                                                                />
+                                                                                <span className="font-bold text-zinc-700 dark:text-zinc-300">{trx.stock.stock_code}</span>
+                                                                            </div>
+                                                                        </td>
                                                                         <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-400">{trx.lots}</td>
                                                                         <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-400">{formatIDR(trx.buy_price)}</td>
                                                                         <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-400">{formatIDR(trx.sell_price)}</td>
