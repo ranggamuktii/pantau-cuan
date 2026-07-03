@@ -113,7 +113,7 @@ export default function Login({ status }) {
                     >
                         {/* Shimmer effect */}
                         <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-zinc-100/40 dark:via-zinc-700/40 to-transparent group-hover:animate-shimmer"></div>
-                        
+
                         <div className="flex items-center space-x-4 relative z-10">
                             {isVerifying ? (
                                 <svg className="animate-spin h-6 w-6 text-gojek-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -132,13 +132,13 @@ export default function Login({ status }) {
                         </div>
                     </button>
                 </div>
-                
+
                 <div className="w-full flex items-center justify-center space-x-4 opacity-60">
                     <div className="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></div>
                     <span className="text-xs uppercase tracking-widest font-bold">Login Aman</span>
                     <div className="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></div>
                 </div>
-                
+
                 <div className="text-center text-xs text-zinc-400 dark:text-zinc-500">
                     Dengan masuk, lo setuju sama Syarat & Ketentuan kita. Aman kok, dijagain reCAPTCHA.
                 </div>
