@@ -97,10 +97,10 @@ export default function Login({ status }) {
             <div className="flex flex-col items-center justify-center space-y-8 pb-4">
                 <div className="text-center space-y-3">
                     <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-                        Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-gojek-600 to-emerald-400">Pantau Cuan</span>
+                        Halo dari <span className="text-transparent bg-clip-text bg-gradient-to-r from-gojek-600 to-emerald-400">Pantau Cuan 👋</span>
                     </h2>
                     <p className="text-base text-zinc-500 dark:text-zinc-400 font-medium">
-                        Log in to manage your multi-account stock portfolio and track IPOs.
+                        Masuk sekarang buat pantau portofolio saham multi-akun lo dan berburu IPO tanpa ribet.
                     </p>
                 </div>
 
@@ -128,19 +128,19 @@ export default function Login({ status }) {
                                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                                 </svg>
                             )}
-                            <span>{isVerifying ? "Verifying reCAPTCHA..." : "Continue with Google"}</span>
+                            <span>{isVerifying ? "Bentar, ngecek bentar..." : "Lanjut pake Google"}</span>
                         </div>
                     </button>
                 </div>
                 
                 <div className="w-full flex items-center justify-center space-x-4 opacity-60">
                     <div className="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></div>
-                    <span className="text-xs uppercase tracking-widest font-bold">Secure Login</span>
+                    <span className="text-xs uppercase tracking-widest font-bold">Login Aman</span>
                     <div className="flex-1 h-px bg-zinc-300 dark:bg-zinc-700"></div>
                 </div>
                 
                 <div className="text-center text-xs text-zinc-400 dark:text-zinc-500">
-                    By continuing, you agree to Pantau Cuan's Terms of Service and Privacy Policy. Protected by reCAPTCHA.
+                    Dengan masuk, lo setuju sama Syarat & Ketentuan kita. Aman kok, dijagain reCAPTCHA.
                 </div>
             </div>
         </GuestLayout>
