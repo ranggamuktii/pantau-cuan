@@ -3,6 +3,7 @@ import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGri
 import { useState, Fragment, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Dialog, Transition, Combobox, Listbox } from '@headlessui/react';
+import FeedbackWidget from '@/Components/FeedbackWidget';
 const useCountdown = (targetDateStr) => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true });
 
@@ -1766,6 +1767,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                     </div>
                 </Dialog>
             </Transition>
+            
+            <FeedbackWidget />
         </div>
     );
 }
