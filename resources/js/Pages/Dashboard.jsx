@@ -436,15 +436,14 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                             </div>
                         </div>
 
-                        {/* 2. Detailed Portfolio Table by SID */}
                         <div className="space-y-6">
-                            <div className="flex items-center justify-between mb-4">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
                                 <h2 className="text-xl font-bold text-zinc-800 dark:text-zinc-100">Alokasi Portofolio</h2>
-                                <div className="flex space-x-3">
+                                <div className="flex items-center space-x-2 sm:space-x-3 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto hide-scrollbar">
                                     <button
                                         onClick={handleSyncPrices}
                                         disabled={isSyncing}
-                                        className={`group relative inline-flex items-center justify-center px-4 py-2 text-sm font-semibold transition-all duration-200 rounded-lg focus:outline-none border shadow-sm ${isSyncing ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 border-zinc-200 dark:border-zinc-700 cursor-not-allowed' : 'bg-white dark:bg-zinc-900 text-gojek-600 dark:text-gojek-400 hover:bg-gojek-50 dark:hover:bg-gojek-900/30 border-gojek-200 dark:border-gojek-800 hover:border-gojek-300 dark:hover:border-gojek-700'}`}
+                                        className={`whitespace-nowrap group relative inline-flex items-center justify-center px-4 py-2 text-sm font-semibold transition-all duration-200 rounded-lg focus:outline-none border shadow-sm ${isSyncing ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 border-zinc-200 dark:border-zinc-700 cursor-not-allowed' : 'bg-white dark:bg-zinc-900 text-gojek-600 dark:text-gojek-400 hover:bg-gojek-50 dark:hover:bg-gojek-900/30 border-gojek-200 dark:border-gojek-800 hover:border-gojek-300 dark:hover:border-gojek-700'}`}
                                     >
                                         {isSyncing ? (
                                             <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-stone-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
@@ -456,7 +455,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                     {auth.user ? (
                                         <button
                                             onClick={() => setIsSidModalOpen(true)}
-                                            className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
+                                            className="whitespace-nowrap inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
                                         >
                                             <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                             Tambah Akun SID
@@ -464,7 +463,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                     ) : (
                                         <Link
                                             href={route('login')}
-                                            className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
+                                            className="whitespace-nowrap inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
                                         >
                                             <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                             Login Buat Pantau
@@ -1001,12 +1000,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Kode Saham</label>
                                             <Combobox value={trxData.stock_code} onChange={val => {
                                                 const activeIpo = activeIpos?.find(ipo => ipo.ticker === val);
-                                                const isOffering = activeIpo && activeIpo.status !== 'Closed';
-                                                if (!isOffering && val) {
-                                                    setToast({ show: true, message: 'Saham ini udah lewat masa penawarannya, jadi nggak bisa ditambah ya.', type: 'error' });
-                                                    setTimeout(() => setToast({ show: false, message: '', type: '' }), 5000);
-                                                    return;
-                                                }
                                                 let ipoPriceStr = activeIpo?.price || '';
                                                 let ipoPriceNum = ipoPriceStr.replace(/[^0-9]/g, '');
 
@@ -1067,12 +1060,20 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Harga IPO (Rp)</label>
+                                                <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Harga Beli (Rp)</label>
                                                 <div className="relative">
                                                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                         <span className="text-zinc-500 dark:text-zinc-400 sm:text-sm font-medium">Rp</span>
                                                     </div>
-                                                    <input type="number" value={trxData.ipo_price} onChange={e => setTrxData('ipo_price', e.target.value)} required readOnly className="w-full rounded-2xl border-zinc-200 dark:border-zinc-700 focus:border-gojek-500 focus:ring-gojek-500 transition-colors pl-9 pr-3 py-3 bg-zinc-100 dark:bg-zinc-800 font-semibold text-zinc-500 dark:text-zinc-400 cursor-not-allowed shadow-inner" placeholder="Otomatis" />
+                                                    <input 
+                                                        type="number" 
+                                                        value={trxData.ipo_price} 
+                                                        onChange={e => setTrxData('ipo_price', e.target.value)} 
+                                                        required 
+                                                        readOnly={activeIpos?.some(ipo => ipo.ticker === trxData.stock_code)} 
+                                                        className={`w-full rounded-2xl border-zinc-200 dark:border-zinc-700 focus:border-gojek-500 focus:ring-gojek-500 transition-colors pl-9 pr-3 py-3 font-semibold shadow-inner ${activeIpos?.some(ipo => ipo.ticker === trxData.stock_code) ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 cursor-not-allowed' : 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white cursor-text'}`} 
+                                                        placeholder={activeIpos?.some(ipo => ipo.ticker === trxData.stock_code) ? "Otomatis" : "Misal: 500"} 
+                                                    />
                                                 </div>
                                             </div>
                                             <div>

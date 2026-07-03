@@ -105,14 +105,14 @@ class DashboardController extends Controller
         
         // Fetch active IPO list (Manual/Scraped)
         $activeIpos = [];
-        $ipoFile = storage_path('app/active_ipos.json');
+        $ipoFile = base_path('active_ipos.json');
         if (file_exists($ipoFile)) {
             $activeIpos = json_decode(file_get_contents($ipoFile), true) ?? [];
         }
 
         // Fetch IPO Calendar Data
         $ipoCalendar = [];
-        $calendarFile = storage_path('app/ipo_calendar.json');
+        $calendarFile = base_path('ipo_calendar.json');
         if (file_exists($calendarFile)) {
             $ipoCalendar = json_decode(file_get_contents($calendarFile), true) ?? [];
         }

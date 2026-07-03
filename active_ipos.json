@@ -1,0 +1,206 @@
+[
+  {
+    "id": 351,
+    "status": "Offering",
+    "company_name": "PT ESA MEDIKA MANDIRI TBK",
+    "ticker": "EMMI",
+    "is_syariah": false,
+    "sector": "Healthcare",
+    "offering_period": "02 Jul 2026 - 06 Jul 2026",
+    "price_type": "Harga Penawaran",
+    "price": "Rp 470",
+    "shares_offered": "5.228.570 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=351&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=351",
+      "more_info": "/id/ipo/351/emmi-pt-esa-medika-mandiri-tbk"
+    }
+  },
+  {
+    "id": 353,
+    "status": "Offering",
+    "company_name": "PT Bach Multi Global Tbk.",
+    "ticker": "BACH",
+    "is_syariah": true,
+    "sector": "Industrials",
+    "offering_period": "02 Jul 2026 - 06 Jul 2026",
+    "price_type": "Harga Penawaran",
+    "price": "Rp 442",
+    "shares_offered": "6.150.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=353&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=353",
+      "more_info": "/id/ipo/353/bach-pt-bach-multi-global-tbk"
+    }
+  },
+  {
+    "id": 354,
+    "status": "Offering",
+    "company_name": "PT Rans Entertainmen Indonesia Tbk",
+    "ticker": "RANS",
+    "is_syariah": false,
+    "sector": "Consumer Cyclicals",
+    "offering_period": "02 Jul 2026 - 08 Jul 2026",
+    "price_type": "Harga Penawaran",
+    "price": "Rp 170",
+    "shares_offered": "25.250.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=354&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=354",
+      "more_info": "/id/ipo/354/rans-pt-rans-entertainmen-indonesia-tbk"
+    }
+  },
+  {
+    "id": 352,
+    "status": "Offering",
+    "company_name": "PT Nitrasanata Dharma Tbk",
+    "ticker": "JECX",
+    "is_syariah": true,
+    "sector": "Healthcare",
+    "offering_period": "01 Jul 2026 - 03 Jul 2026",
+    "price_type": "Harga Penawaran",
+    "price": "Rp 1.250",
+    "shares_offered": "4.879.835 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=352&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=352",
+      "more_info": "/id/ipo/352/jecx-pt-nitrasanata-dharma-tbk"
+    }
+  },
+  {
+    "id": 349,
+    "status": "Offering",
+    "company_name": "PT Niramas Utama Tbk",
+    "ticker": "JELI",
+    "is_syariah": true,
+    "sector": "Consumer Non-Cyclicals",
+    "offering_period": "01 Jul 2026 - 03 Jul 2026",
+    "price_type": "Harga Penawaran",
+    "price": "Rp 900",
+    "shares_offered": "2.660.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=349&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=349",
+      "more_info": "/id/ipo/349/jeli-pt-niramas-utama-tbk"
+    }
+  },
+  {
+    "id": 350,
+    "status": "Offering",
+    "company_name": "PT Prodia Diagnostic Line Tbk",
+    "ticker": "PRDL",
+    "is_syariah": false,
+    "sector": "Healthcare",
+    "offering_period": "01 Jul 2026 - 07 Jul 2026",
+    "price_type": "Harga Penawaran",
+    "price": "Rp 120",
+    "shares_offered": "5.229.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=350&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=350",
+      "more_info": "/id/ipo/350/prdl-pt-prodia-diagnostic-line-tbk"
+    }
+  },
+  {
+    "id": 348,
+    "status": "Closed",
+    "company_name": "PT BSA Logistics Indonesia Tbk",
+    "ticker": "WBSA",
+    "is_syariah": true,
+    "sector": "Transportation & Logistic",
+    "listing_date": "10 Apr 2026",
+    "price_type": "Harga Final",
+    "price": "Rp 168",
+    "shares_offered": "18.000.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=348&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=348",
+      "more_info": "/id/ipo/348/wbsa-pt-bsa-logistics-indonesia-tbk"
+    }
+  },
+  {
+    "id": 347,
+    "status": "Closed",
+    "company_name": "PT Super Bank Indonesia Tbk",
+    "ticker": "SUPA",
+    "is_syariah": false,
+    "sector": "Financials",
+    "listing_date": "17 Dec 2025",
+    "price_type": "Harga Final",
+    "price": "Rp 635",
+    "shares_offered": "44.066.123 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=347&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=347",
+      "more_info": "/id/ipo/347/supa-pt-super-bank-indonesia-tbk"
+    }
+  },
+  {
+    "id": 346,
+    "status": "Closed",
+    "company_name": "PT Abadi Lestari Indonesia Tbk",
+    "ticker": "RLCO",
+    "is_syariah": false,
+    "sector": "Consumer Non-Cyclicals",
+    "listing_date": "08 Dec 2025",
+    "price_type": "Harga Final",
+    "price": "Rp 168",
+    "shares_offered": "6.250.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=346&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=346",
+      "more_info": "/id/ipo/346/rlco-pt-abadi-lestari-indonesia-tbk"
+    }
+  },
+  {
+    "id": 345,
+    "status": "Closed",
+    "company_name": "PT Pelayaran Jaya Hidup Baru Tbk.",
+    "ticker": "PJHB",
+    "is_syariah": true,
+    "sector": "Transportation & Logistic",
+    "listing_date": "06 Nov 2025",
+    "price_type": "Harga Final",
+    "price": "Rp 330",
+    "shares_offered": "4.800.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=345&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=345",
+      "more_info": "/id/ipo/345/pjhb-pt-pelayaran-jaya-hidup-baru-tbk"
+    }
+  },
+  {
+    "id": 344,
+    "status": "Closed",
+    "company_name": "PT Merdeka Gold Resources Tbk",
+    "ticker": "EMAS",
+    "is_syariah": false,
+    "sector": "Basic Materials",
+    "listing_date": "23 Sep 2025",
+    "price_type": "Harga Final",
+    "price": "Rp 2.880",
+    "shares_offered": "16.180.233 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=344&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=344",
+      "more_info": "/id/ipo/344/emas-pt-merdeka-gold-resources-tbk"
+    }
+  },
+  {
+    "id": 337,
+    "status": "Closed",
+    "company_name": "PT Diastika Biotekindo Tbk",
+    "ticker": "CHEK",
+    "is_syariah": true,
+    "sector": "Healthcare",
+    "listing_date": "10 Jul 2025",
+    "price_type": "Harga Final",
+    "price": "Rp 128",
+    "shares_offered": "8.150.000 Lot",
+    "links": {
+      "prospectus": "/id/pipeline/get-propectus-file?id=337&type=",
+      "additional_info": "/id/pipeline/get-additional-info?id=337",
+      "more_info": "/id/ipo/337/chek-pt-diastika-biotekindo-tbk"
+    }
+  }
+]

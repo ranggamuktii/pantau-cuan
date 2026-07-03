@@ -1,0 +1,34 @@
+[
+    {
+        "id": 349,
+        "url": "/en/ipo/349/jeli-pt-niramas-utama-tbk",
+        "title": "JELI | PT Niramas Utama Tbk",
+        "className": "panel paneloffering",
+        "start": "2026-07-01",
+        "end": "2026-07-04"
+    },
+    {
+        "id": 350,
+        "url": "/en/ipo/350/prdl-pt-prodia-diagnostic-line-tbk",
+        "title": "PRDL | PT Prodia Diagnostic Line Tbk",
+        "className": "panel paneloffering",
+        "start": "2026-07-01",
+        "end": "2026-07-08"
+    },
+    {
+        "id": 352,
+        "url": "/en/ipo/352/jecx-pt-nitrasanata-dharma-tbk",
+        "title": "JECX | PT Nitrasanata Dharma Tbk",
+        "className": "panel paneloffering",
+        "start": "2026-07-01",
+        "end": "2026-07-04"
+    },
+    {
+        "id": 353,
+        "url": "/en/ipo/353/bach-pt-bach-multi-global-tbk",
+        "title": "BACH | PT Bach Multi Global Tbk.",
+        "className": "panel paneloffering",
+        "start": "2026-07-02",
+        "end": "2026-07-07"
+    }
+]

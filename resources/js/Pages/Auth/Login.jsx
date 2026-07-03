@@ -96,8 +96,8 @@ export default function Login({ status }) {
 
             <div className="flex flex-col items-center justify-center space-y-8 pb-4 pt-2">
                 <div className="text-center space-y-2">
-                    <h2 className="text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight">
-                        Halo dari <span className="text-transparent bg-clip-text bg-gradient-to-r from-gojek-600 to-emerald-400">Pantau Cuan 👋</span>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-white tracking-tight text-center flex flex-wrap justify-center items-center gap-x-2">
+                        <span>Halo dari</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-gojek-600 to-emerald-400">Pantau Cuan</span> <span className="inline-block">👋</span>
                     </h2>
                     <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">
                         Login buat kelola portofolio saham lo tanpa ribet.
