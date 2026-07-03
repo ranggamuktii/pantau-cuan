@@ -37,6 +37,14 @@ class DashboardController extends Controller
             foreach ($sid->transactions as $transaction) {
                 $stock = $transaction->stock;
                 
+                // Add net_profit for closed transactions unconditionally
+                $totalNetProfit += $transaction->net_profit ?? 0;
+
+                // Skip active calculations if transaction is closed
+                if ($transaction->status === 'closed') {
+                    continue;
+                }
+
                 // Calculate lots to shares (1 lot = 100 shares in IDX)
                 $shares = $transaction->lots * 100;
                 $buyValue = $shares * $transaction->buy_price;
@@ -47,7 +55,6 @@ class DashboardController extends Controller
                 $totalCapital += $buyValue;
                 $totalCurrentValue += $currentValue;
                 $totalFloatingProfit += $floatingProfit;
-                $totalNetProfit += $transaction->net_profit ?? 0;
                 
                 $sidCapital += $buyValue;
                 $sidFloatingProfit += $floatingProfit;

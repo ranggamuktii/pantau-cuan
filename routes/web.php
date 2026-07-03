@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
     Route::put('/transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
     Route::delete('/transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+    Route::post('/transactions/{transaction}/sell', [TransactionController::class, 'sell'])->name('transactions.sell');
 
     Route::post('/sync-prices', [StockSyncController::class, 'sync'])->name('stocks.sync');
     Route::post('/stocks/{stock}/update-price', [StockSyncController::class, 'updatePrice'])->name('stocks.updatePrice');

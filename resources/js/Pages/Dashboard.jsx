@@ -199,6 +199,14 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         lots: '',
     });
 
+    const [isSellModalOpen, setIsSellModalOpen] = useState(false);
+    const [targetSellTrx, setTargetSellTrx] = useState(null);
+
+    const { data: sellData, setData: setSellData, post: postSell, processing: processingSell, reset: resetSell, errors: sellErrors } = useForm({
+        sell_price: '',
+        lots: '',
+    });
+
     const formatIDR = (value) => {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
     };
@@ -231,6 +239,26 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     const openDeleteSid = (sid) => {
         setTargetSid(sid);
         setIsDeleteSidModalOpen(true);
+    };
+
+    const openSellModal = (trx) => {
+        setTargetSellTrx(trx);
+        setSellData({
+            sell_price: trx.stock.current_price ?? trx.buy_price,
+            lots: trx.lots,
+        });
+        setIsSellModalOpen(true);
+    };
+
+    const submitSell = (e) => {
+        e.preventDefault();
+        postSell(route('transactions.sell', targetSellTrx.id), {
+            onSuccess: () => {
+                setIsSellModalOpen(false);
+                setTargetSellTrx(null);
+                resetSell();
+            },
+        });
     };
 
     const calculateAvgDown = () => {
@@ -496,7 +524,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                 </div>
                             ) : (
                                 accountSids.map((sid) => {
-                                    const totalSidFloating = sid.transactions.reduce((acc, trx) => {
+                                    const totalSidFloating = sid.transactions.filter(t => t.status === 'open').reduce((acc, trx) => {
                                         const currentPrice = trx.stock.current_price || trx.stock.ipo_price;
                                         return acc + (currentPrice - trx.buy_price) * (trx.lots * 100);
                                     }, 0);
@@ -544,10 +572,12 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                         </tr>
                                                     </thead>
                                                     <tbody className="bg-white dark:bg-zinc-900 divide-y divide-zinc-50 dark:divide-zinc-800">
-                                                        {sid.transactions.length === 0 ? (
-                                                            <tr><td colSpan="6" className="px-6 py-6 text-center text-zinc-400 dark:text-zinc-500 text-sm">Belum ada saham yang dicatat nih.</td></tr>
-                                                        ) : (
-                                                            sid.transactions.map((trx) => {
+                                                        {(() => {
+                                                            const openTransactions = sid.transactions.filter(t => t.status === 'open');
+                                                            if (openTransactions.length === 0) {
+                                                                return <tr><td colSpan="6" className="px-6 py-6 text-center text-zinc-400 dark:text-zinc-500 text-sm">Belum ada saham aktif di portofolio ini.</td></tr>;
+                                                            }
+                                                            return openTransactions.map((trx) => {
                                                                 const stock = trx.stock;
                                                                 const shares = trx.lots * 100;
                                                                 let currentPrice = stock.current_price;
@@ -617,6 +647,15 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                                         <div className="absolute top-full right-2 w-2.5 h-2.5 bg-zinc-900 dark:bg-white rotate-45 -mt-1.5 border-r border-b border-zinc-800 dark:border-zinc-200"></div>
                                                                                     </div>
                                                                                 </div>
+                                                                                {trx.status === 'open' && (
+                                                                                    <div className="relative group/tooltip">
+                                                                                        <button onClick={() => openSellModal(trx)} className="p-1.5 text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>
+                                                                                        <div className="absolute bottom-full right-0 mb-2 invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-all z-50 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold px-3 py-2 rounded-xl shadow-xl whitespace-nowrap border border-zinc-800 dark:border-zinc-200">
+                                                                                            💸 Jual Saham
+                                                                                            <div className="absolute top-full right-2 w-2.5 h-2.5 bg-zinc-900 dark:bg-white rotate-45 -mt-1.5 border-r border-b border-zinc-800 dark:border-zinc-200"></div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )}
                                                                                 <div className="relative group/tooltip">
                                                                                     <button onClick={() => openEditTrx(trx)} className="p-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg></button>
                                                                                     <div className="absolute bottom-full right-0 mb-2 invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-all z-50 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold px-3 py-2 rounded-xl shadow-xl whitespace-nowrap border border-zinc-800 dark:border-zinc-200">
@@ -635,10 +674,10 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                         </td>
                                                                     </tr>
                                                                 );
-                                                            })
-                                                        )}
+                                                            });
+                                                        })()}
                                                     </tbody>
-                                                    {sid.transactions.length > 0 && (
+                                                    {sid.transactions.filter(t => t.status === 'open').length > 0 && (
                                                         <tfoot className="bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-800">
                                                             <tr>
                                                                 <td colSpan="4" className="px-6 py-4 text-right text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Total Potensi P/L</td>
@@ -653,6 +692,44 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                     )}
                                                 </table>
                                             </div>
+
+                                            {/* History Section */}
+                                            {sid.transactions.filter(t => t.status === 'closed').length > 0 && (
+                                                <div className="mt-6 border-t border-zinc-100 dark:border-zinc-800 pt-6 px-2 pb-2">
+                                                    <h5 className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-3 flex items-center space-x-2">
+                                                        <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                                        <span>Riwayat Penjualan</span>
+                                                    </h5>
+                                                    <div className="overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-zinc-900/50 shadow-sm">
+                                                        <table className="w-full text-left border-collapse text-sm">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th className="px-4 py-2 text-xs font-semibold text-zinc-500 uppercase tracking-wider">Saham</th>
+                                                                    <th className="px-4 py-2 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Lot</th>
+                                                                    <th className="px-4 py-2 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Beli</th>
+                                                                    <th className="px-4 py-2 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Jual</th>
+                                                                    <th className="px-4 py-2 text-right text-xs font-semibold text-zinc-500 uppercase tracking-wider">Realized P/L</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                                                                {sid.transactions.filter(t => t.status === 'closed').map(trx => (
+                                                                    <tr key={trx.id}>
+                                                                        <td className="px-4 py-3 font-bold text-zinc-700 dark:text-zinc-300">{trx.stock.stock_code}</td>
+                                                                        <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-400">{trx.lots}</td>
+                                                                        <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-400">{formatIDR(trx.buy_price)}</td>
+                                                                        <td className="px-4 py-3 text-right text-zinc-600 dark:text-zinc-400">{formatIDR(trx.sell_price)}</td>
+                                                                        <td className="px-4 py-3 text-right">
+                                                                            <span className={`font-bold ${trx.net_profit > 0 ? 'text-emerald-600 dark:text-emerald-400' : trx.net_profit < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-500'}`}>
+                                                                                {trx.net_profit > 0 ? '+' : ''}{formatIDR(trx.net_profit)}
+                                                                            </span>
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     )
                                 })
@@ -1761,6 +1838,76 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             </div>
                                         </div>
                                     )}
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+            {/* Sell Modal */}
+            <Transition appear show={isSellModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsSellModalOpen(false)}>
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
+                                    <Dialog.Title as="h3" className="text-xl font-black leading-6 text-zinc-900 dark:text-white mb-6">
+                                        Jual Saham <span className="text-emerald-500">{targetSellTrx?.stock?.stock_code}</span>
+                                    </Dialog.Title>
+                                    <form onSubmit={submitSell} className="space-y-5">
+                                        <div>
+                                            <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Harga Jual</label>
+                                            <div className="relative">
+                                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                    <span className="text-zinc-500 font-bold">Rp</span>
+                                                </div>
+                                                <input
+                                                    type="number"
+                                                    value={sellData.sell_price}
+                                                    onChange={e => setSellData('sell_price', e.target.value)}
+                                                    required
+                                                    min="0"
+                                                    className="w-full pl-12 rounded-xl border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-emerald-500 focus:border-emerald-500 py-3 font-semibold"
+                                                />
+                                            </div>
+                                            {sellErrors.sell_price && <p className="mt-2 text-sm text-rose-600">{sellErrors.sell_price}</p>}
+                                        </div>
+                                        <div>
+                                            <div className="flex justify-between items-end mb-2">
+                                                <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300">Jumlah Lot</label>
+                                                <span className="text-xs text-zinc-500">Maks: {targetSellTrx?.lots} Lot</span>
+                                            </div>
+                                            <input
+                                                type="number"
+                                                value={sellData.lots}
+                                                onChange={e => setSellData('lots', e.target.value)}
+                                                required
+                                                min="1"
+                                                max={targetSellTrx?.lots}
+                                                className="w-full rounded-xl border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-emerald-500 focus:border-emerald-500 py-3 font-semibold"
+                                            />
+                                            {sellErrors.lots && <p className="mt-2 text-sm text-rose-600">{sellErrors.lots}</p>}
+                                        </div>
+
+                                        <div className="bg-zinc-50 dark:bg-zinc-800/50 p-4 rounded-xl border border-zinc-100 dark:border-zinc-700">
+                                            <div className="flex justify-between items-center text-sm mb-1">
+                                                <span className="text-zinc-500 dark:text-zinc-400 font-medium">Estimasi Cuan:</span>
+                                                <span className={`font-bold ${((sellData.sell_price || 0) - (targetSellTrx?.buy_price || 0)) * (sellData.lots || 0) * 100 > 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                    {formatIDR(((sellData.sell_price || 0) - (targetSellTrx?.buy_price || 0)) * (sellData.lots || 0) * 100)}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div className="pt-2 flex space-x-3">
+                                            <button type="button" onClick={() => setIsSellModalOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">Batal</button>
+                                            <button type="submit" disabled={processingSell} className="flex-1 px-4 py-3 rounded-xl bg-emerald-500 text-white font-bold hover:bg-emerald-600 transition-colors disabled:opacity-50 flex justify-center items-center">
+                                                {processingSell ? 'Memproses...' : 'Jual Saham'}
+                                            </button>
+                                        </div>
+                                    </form>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
