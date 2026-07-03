@@ -4,6 +4,7 @@ import { useState, Fragment, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Dialog, Transition, Combobox, Listbox } from '@headlessui/react';
 import FeedbackWidget from '@/Components/FeedbackWidget';
+import confetti from 'canvas-confetti';
 const useCountdown = (targetDateStr) => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true });
 
@@ -201,6 +202,39 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
 
     const [isSellModalOpen, setIsSellModalOpen] = useState(false);
     const [targetSellTrx, setTargetSellTrx] = useState(null);
+    const [isTierModalOpen, setIsTierModalOpen] = useState(false);
+
+    const getTierLevel = (netProfit) => {
+        if (netProfit <= 0) return { name: 'Kuli Pasar', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>, color: 'text-zinc-500 dark:text-zinc-400', bg: 'bg-zinc-100 dark:bg-zinc-800', next: 500000, nextName: 'Pedagang Asongan', min: 0 };
+        if (netProfit <= 500000) return { name: 'Pedagang Asongan', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>, color: 'text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30', next: 2000000, nextName: 'Juragan ARA', min: 0 };
+        if (netProfit <= 2000000) return { name: 'Juragan ARA', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', next: 10000000, nextName: 'Bandar Cilik', min: 500000 };
+        if (netProfit <= 10000000) return { name: 'Bandar Cilik', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30', next: 50000000, nextName: 'Anak Sultan', min: 2000000 };
+        return { name: 'Anak Sultan', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>, color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30', next: null, nextName: null, min: 10000000 };
+    };
+
+    const totalGlobalNetProfit = accountSids.reduce((acc, sid) => acc + sid.transactions.filter(t => t.status === 'closed').reduce((sum, trx) => sum + trx.net_profit, 0), 0);
+    const currentTier = getTierLevel(totalGlobalNetProfit);
+
+    // Calculate Album Koleksi IPO
+    const ipoCollection = [];
+    accountSids.forEach(sid => {
+        sid.transactions.forEach(trx => {
+            const existing = ipoCollection.find(c => c.stock.stock_code === trx.stock.stock_code);
+            if (existing) {
+                if (trx.status === 'closed') {
+                    existing.net_profit += trx.net_profit;
+                    existing.has_closed = true;
+                }
+            } else {
+                ipoCollection.push({ 
+                    stock: trx.stock, 
+                    net_profit: trx.status === 'closed' ? trx.net_profit : 0,
+                    has_closed: trx.status === 'closed'
+                });
+            }
+        });
+    });
+    ipoCollection.sort((a, b) => b.net_profit - a.net_profit);
 
     const { data: sellData, setData: setSellData, post: postSell, processing: processingSell, reset: resetSell, errors: sellErrors } = useForm({
         sell_price: '',
@@ -254,6 +288,16 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         e.preventDefault();
         postSell(route('transactions.sell', targetSellTrx.id), {
             onSuccess: () => {
+                const profit = ((sellData.sell_price || 0) - (targetSellTrx?.buy_price || 0)) * (sellData.lots || 0) * 100;
+                if (profit > 0) {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#10b981', '#34d399', '#f59e0b', '#fbbf24']
+                    });
+                }
+                
                 setIsSellModalOpen(false);
                 setTargetSellTrx(null);
                 resetSell();
@@ -357,8 +401,12 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 </div>
                                             </div>
                                         )}
-                                        <div className="hidden sm:flex flex-col justify-center">
+                                        <div className="hidden sm:flex flex-col justify-center items-end">
                                             <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200 leading-tight whitespace-nowrap">{auth.user.name}</span>
+                                            <button onClick={() => setIsTierModalOpen(true)} className={`flex items-center space-x-1 mt-1 px-2 py-0.5 rounded-md ${currentTier.bg} transition-colors group cursor-help border border-zinc-200/50 dark:border-zinc-700/50`}>
+                                                <span className={`${currentTier.color} group-hover:scale-110 transition-transform scale-75`}>{currentTier.icon}</span>
+                                                <span className={`text-[10px] font-bold ${currentTier.color}`}>{currentTier.name}</span>
+                                            </button>
                                         </div>
                                         <div className="w-px h-5 md:h-6 bg-zinc-200 dark:bg-zinc-800 mx-1 md:mx-2 hidden sm:block"></div>
                                         <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-zinc-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors" title="Toggle Theme">
@@ -944,6 +992,54 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                             )}
                         </div>
 
+                        {/* 7. Album Koleksi IPO */}
+                        <div className={`${mobileTab === 'collection' ? 'block' : 'hidden'} xl:block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-[1.5rem] shadow-sm`}>
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center space-x-2">
+                                    <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                    <span>Album Koleksi</span>
+                                </h2>
+                                <div className="text-xs font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{ipoCollection.length} Stiker</div>
+                            </div>
+                            
+                            {ipoCollection.length > 0 ? (
+                                <div className="grid grid-cols-3 sm:grid-cols-4 xl:grid-cols-3 gap-3">
+                                    {ipoCollection.map((item, idx) => (
+                                        <div key={idx} className={`relative rounded-xl border p-2 flex flex-col items-center justify-center aspect-[3/4] overflow-hidden group transition-all duration-300
+                                            ${item.has_closed 
+                                                ? (item.net_profit > 0 ? 'border-amber-400 bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-800/10 shadow-[0_0_15px_rgba(251,191,36,0.2)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] hover:-translate-y-1' 
+                                                : 'border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/50 grayscale hover:grayscale-0 opacity-70 hover:opacity-100')
+                                                : 'border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 border-dashed'
+                                            }
+                                        `}>
+                                            {item.has_closed && item.net_profit > 0 && (
+                                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/50 dark:via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] skew-x-12 z-10 pointer-events-none"></div>
+                                            )}
+                                            <div className="w-10 h-10 rounded-full bg-white dark:bg-zinc-800 shadow-sm flex items-center justify-center p-1 mb-2 z-0 relative shrink-0">
+                                                <img src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${item.stock.stock_code}`} alt={item.stock.stock_code} className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${item.stock.stock_code}&background=random&color=57534e`; }} loading="lazy" />
+                                            </div>
+                                            <div className="text-xs font-black text-zinc-800 dark:text-zinc-200 z-0 text-center w-full truncate px-1">{item.stock.stock_code}</div>
+                                            
+                                            <div className="mt-1 text-[9px] font-bold z-0 text-center w-full">
+                                                {item.has_closed ? (
+                                                    item.net_profit > 0 
+                                                        ? <span className="text-amber-700 dark:text-amber-400 bg-amber-200 dark:bg-amber-900/50 px-1.5 py-0.5 rounded-full inline-block">SHINY</span>
+                                                        : <span className="text-zinc-500 bg-zinc-200 dark:bg-zinc-700 px-1.5 py-0.5 rounded-full inline-block">RETAK</span>
+                                                ) : (
+                                                    <span className="text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-1.5 py-0.5 rounded-full inline-block">AKTIF</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700">
+                                    <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Album masih kosong, belum ada stiker.</p>
+                                </div>
+                            )}
+                        </div>
+
                     </div>
                 </div>
             </main>
@@ -953,10 +1049,10 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 <div className="flex justify-around items-center px-2 py-3">
                     <button
                         onClick={() => setMobileTab('calendar')}
-                        className={`flex flex-col items-center justify-center space-y-1 w-20 transition-colors ${mobileTab === 'calendar' ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
+                        className={`flex flex-col items-center justify-center space-y-1 w-[20%] transition-colors ${mobileTab === 'calendar' ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
                     >
                         <div className={`p-1.5 rounded-xl transition-colors ${mobileTab === 'calendar' ? 'bg-gojek-50 dark:bg-gojek-900/30' : ''}`}>
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'calendar' ? '2.5' : '2'}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'calendar' ? '2.5' : '2'}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                         </div>
@@ -965,10 +1061,10 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
 
                     <button
                         onClick={() => setMobileTab('portfolio')}
-                        className={`flex flex-col items-center justify-center space-y-1 w-20 transition-colors ${mobileTab === 'portfolio' ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
+                        className={`flex flex-col items-center justify-center space-y-1 w-[20%] transition-colors ${mobileTab === 'portfolio' ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
                     >
                         <div className={`p-1.5 rounded-xl transition-colors ${mobileTab === 'portfolio' ? 'bg-gojek-50 dark:bg-gojek-900/30' : ''}`}>
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'portfolio' ? '2.5' : '2'}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'portfolio' ? '2.5' : '2'}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
@@ -977,14 +1073,26 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
 
                     <button
                         onClick={() => setMobileTab('offerings')}
-                        className={`flex flex-col items-center justify-center space-y-1 w-20 transition-colors ${mobileTab === 'offerings' ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
+                        className={`flex flex-col items-center justify-center space-y-1 w-[20%] transition-colors ${mobileTab === 'offerings' ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
                     >
                         <div className={`p-1.5 rounded-xl transition-colors ${mobileTab === 'offerings' ? 'bg-gojek-50 dark:bg-gojek-900/30' : ''}`}>
-                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'offerings' ? '2.5' : '2'}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'offerings' ? '2.5' : '2'}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
                         <span className={`text-[10px] font-bold ${mobileTab === 'offerings' ? 'text-gojek-600 dark:text-gojek-400' : ''}`}>Penawaran</span>
+                    </button>
+
+                    <button
+                        onClick={() => setMobileTab('collection')}
+                        className={`flex flex-col items-center justify-center space-y-1 w-[20%] transition-colors ${mobileTab === 'collection' ? 'text-amber-500 dark:text-amber-400' : 'text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300'}`}
+                    >
+                        <div className={`p-1.5 rounded-xl transition-colors ${mobileTab === 'collection' ? 'bg-amber-50 dark:bg-amber-900/30' : ''}`}>
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={mobileTab === 'collection' ? '2.5' : '2'}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                        </div>
+                        <span className={`text-[10px] font-bold ${mobileTab === 'collection' ? 'text-amber-600 dark:text-amber-400' : ''}`}>Koleksi</span>
                     </button>
                 </div>
             </div>
@@ -1908,6 +2016,84 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             </button>
                                         </div>
                                     </form>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+            {/* Tier Info Modal */}
+            <Transition appear show={isTierModalOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsTierModalOpen(false)}>
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <Dialog.Title as="h3" className="text-xl font-black text-zinc-900 dark:text-white">
+                                            Pangkat Bandar Lu
+                                        </Dialog.Title>
+                                        <button onClick={() => setIsTierModalOpen(false)} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 p-2 rounded-full transition-colors">
+                                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
+                                    </div>
+
+                                    <div className="flex flex-col items-center justify-center mb-8">
+                                        <div className={`w-24 h-24 rounded-full ${currentTier.bg} border-4 border-white dark:border-zinc-800 flex items-center justify-center mb-4 shadow-xl`}>
+                                            <span className={`${currentTier.color} scale-150`}>{currentTier.icon}</span>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Pangkat Saat Ini</div>
+                                            <div className={`text-2xl font-black ${currentTier.color}`}>{currentTier.name}</div>
+                                            <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mt-2">
+                                                Cuan Sejati: {formatIDR(totalGlobalNetProfit)}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {currentTier.next && (
+                                        <div className="mb-8 bg-zinc-50 dark:bg-zinc-800/50 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+                                            <div className="flex justify-between text-xs font-bold mb-2">
+                                                <span className="text-zinc-500">Progress ke {currentTier.nextName}</span>
+                                                <span className="text-zinc-900 dark:text-white">{Math.min(Math.round(((totalGlobalNetProfit - currentTier.min) / (currentTier.next - currentTier.min)) * 100), 100)}%</span>
+                                            </div>
+                                            <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2.5 mb-2 overflow-hidden">
+                                                <div className={`h-2.5 rounded-full ${currentTier.color.replace('text-', 'bg-')} transition-all duration-1000`} style={{ width: `${Math.min(((totalGlobalNetProfit - currentTier.min) / (currentTier.next - currentTier.min)) * 100, 100)}%` }}></div>
+                                            </div>
+                                            <p className="text-[10px] text-center font-semibold text-zinc-500 mt-3">Butuh {formatIDR(currentTier.next - totalGlobalNetProfit)} lagi buat naik pangkat!</p>
+                                        </div>
+                                    )}
+
+                                    <div>
+                                        <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Daftar Kepangkatan</div>
+                                        <div className="space-y-2">
+                                            {[
+                                                { name: 'Kuli Pasar', desc: 'Belum ngerasain cuan', color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
+                                                { name: 'Pedagang Asongan', desc: 'Cuan s/d Rp 500k', color: 'text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30' },
+                                                { name: 'Juragan ARA', desc: 'Cuan s/d Rp 2 Juta', color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+                                                { name: 'Bandar Cilik', desc: 'Cuan s/d Rp 10 Juta', color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30' },
+                                                { name: 'Anak Sultan', desc: 'Cuan > Rp 10 Juta', color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30' }
+                                            ].map((tier, idx) => (
+                                                <div key={idx} className={`flex items-center justify-between p-3 rounded-xl border ${currentTier.name === tier.name ? 'border-gojek-500 bg-gojek-50 dark:bg-gojek-900/20' : 'border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900'}`}>
+                                                    <div className="flex items-center space-x-3">
+                                                        <div className={`w-8 h-8 rounded-full ${tier.bg} flex items-center justify-center`}>
+                                                            <div className={`w-4 h-4 rounded-full ${tier.color.replace('text-', 'bg-')}`}></div>
+                                                        </div>
+                                                        <div>
+                                                            <div className={`text-sm font-bold ${currentTier.name === tier.name ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-700 dark:text-zinc-300'}`}>{tier.name}</div>
+                                                            <div className="text-[10px] text-zinc-500 font-medium">{tier.desc}</div>
+                                                        </div>
+                                                    </div>
+                                                    {currentTier.name === tier.name && (
+                                                        <div className="text-[10px] font-black text-gojek-500 bg-gojek-100 dark:bg-gojek-900 px-2 py-1 rounded-md">YOU</div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </Dialog.Panel>
                             </Transition.Child>
                         </div>
