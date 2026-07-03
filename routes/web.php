@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/stocks/{stock}/update-price', [StockSyncController::class, 'updatePrice'])->name('stocks.updatePrice');
     Route::get('/api/stocks/{ticker}/live-price', [StockSyncController::class, 'getLivePrice'])->name('stocks.livePrice');
 
+    Route::post('/feedbacks', [\App\Http\Controllers\FeedbackController::class, 'store'])->name('feedbacks.store');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
