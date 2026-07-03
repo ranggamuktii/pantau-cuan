@@ -41,4 +41,10 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
     ],
 
+    'recaptcha' => [
+        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+        'action' => env('RECAPTCHA_ACTION', 'google_login'),
+        'min_score' => env('RECAPTCHA_MIN_SCORE', 0.5),
+    ],
+
 ];

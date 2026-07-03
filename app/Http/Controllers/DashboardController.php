@@ -132,16 +132,6 @@ class DashboardController extends Controller
             }
         }
 
-        // Fetch subscriptions
-        $ipoSubscriptions = [];
-        try {
-            $ipoSubscriptions = \App\Models\IpoSubscription::where('user_id', $user->id)
-                ->pluck('ticker')
-                ->toArray();
-        } catch (\Exception $e) {
-            // Bypass table not found error for now
-        }
-
         return Inertia::render('Dashboard', [
             'summary' => $summary,
             'charts' => $charts,
@@ -150,7 +140,6 @@ class DashboardController extends Controller
             'activeIpos' => $activeIpos,
             'ipoCalendar' => $ipoCalendar,
             'ipoDetails' => $ipoDetails,
-            'ipoSubscriptions' => $ipoSubscriptions,
         ]);
     }
 }

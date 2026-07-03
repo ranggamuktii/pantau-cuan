@@ -1,23 +1,86 @@
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head } from '@inertiajs/react';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { useState } from 'react';
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 
 export default function Login({ status }) {
-    const [captchaVerified, setCaptchaVerified] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(false);
+    const recaptchaSiteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        ?.getAttribute("content");
 
-    const onCaptchaChange = (value) => {
-        if (value) {
-            setCaptchaVerified(true);
-        } else {
-            setCaptchaVerified(false);
+    useEffect(() => {
+        if (!recaptchaSiteKey) return;
+
+        const existingScript = document.querySelector(
+            'script[data-recaptcha-v3="true"]',
+        );
+
+        if (
+            window.grecaptcha &&
+            typeof window.grecaptcha.execute === "function"
+        ) {
+            return;
         }
-    };
 
-    const handleGoogleLogin = (e) => {
-        if (!captchaVerified) {
-            e.preventDefault();
-            alert('Please verify that you are human first.');
+        if (existingScript) {
+            return;
+        }
+
+        const script = document.createElement("script");
+        script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
+        script.async = true;
+        script.defer = true;
+        script.dataset.recaptchaV3 = "true";
+        document.head.appendChild(script);
+    }, [recaptchaSiteKey]);
+
+    const handleGoogleLogin = async () => {
+        if (!recaptchaSiteKey || !csrfToken) {
+            alert("Sesi tidak valid. Refresh halaman dan coba lagi.");
+            return;
+        }
+
+        if (
+            !window.grecaptcha ||
+            typeof window.grecaptcha.execute !== "function"
+        ) {
+            alert("Refresh halaman dan coba lagi.");
+            return;
+        }
+
+        try {
+            setIsVerifying(true);
+
+            const action =
+                import.meta.env.VITE_RECAPTCHA_ACTION || "google_login";
+            const token = await window.grecaptcha.execute(recaptchaSiteKey, {
+                action,
+            });
+
+            const response = await fetch(route("google.captcha.verify"), {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN": csrfToken,
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+                body: JSON.stringify({ token }),
+            });
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                alert(data.message || "Verification failed.");
+                return;
+            }
+
+            window.location.href = route("google.login");
+        } catch (error) {
+            alert("Gagal memverifikasi. Coba lagi ya.");
+        } finally {
+            setIsVerifying(false);
         }
     };
 
@@ -33,21 +96,20 @@ export default function Login({ status }) {
 
             <div className="flex flex-col items-center justify-center space-y-6 py-8">
                 <div className="text-center">
-                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight">IPO Investment Tracker</h2>
-                    <p className="mt-2 text-sm text-gray-500">Sign in to manage your multi-account stock portfolio.</p>
+                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+                        IPO Investment Tracker
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-500">
+                        Sign in to manage your multi-account stock portfolio.
+                    </p>
                 </div>
 
-                <div className="w-full flex justify-center py-4">
-                    <ReCAPTCHA
-                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'} // fallback test key
-                        onChange={onCaptchaChange}
-                    />
-                </div>
-
-                <a
-                    href={route('google.login')}
+                <button
+                    type="button"
                     onClick={handleGoogleLogin}
-                    className={`w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors ${!captchaVerified ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={isVerifying}
+                    aria-disabled={isVerifying}
+                    className={`w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors ${isVerifying ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                     <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                         <path
@@ -67,8 +129,10 @@ export default function Login({ status }) {
                             fill="#EA4335"
                         />
                     </svg>
-                    Continue with Google
-                </a>
+                    {isVerifying
+                        ? "Verifying reCAPTCHA..."
+                        : "Continue with Google"}
+                </button>
             </div>
         </GuestLayout>
     );

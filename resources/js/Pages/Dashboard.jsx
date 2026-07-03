@@ -58,23 +58,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     const { flash } = usePage().props;
     const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
 
-    const [subs, setSubs] = useState(ipoSubscriptions || []);
-
-    const toggleSubscription = async (ticker) => {
-        try {
-            const response = await window.axios.post('/ipo-subscriptions/toggle', { ticker });
-            if (response.data.status === 'subscribed') {
-                setSubs([...subs, ticker]);
-                setToast({ show: true, message: response.data.message, type: 'success' });
-            } else {
-                setSubs(subs.filter(t => t !== ticker));
-                setToast({ show: true, message: response.data.message, type: 'success' });
-            }
-        } catch (error) {
-            setToast({ show: true, message: 'Gagal mengatur notifikasi.', type: 'error' });
-        }
-    };
-
     const getMockUwStats = (uwName) => {
         const charCode = uwName.charCodeAt(0) + (uwName.length > 5 ? uwName.charCodeAt(5) : 0);
         const ara = (charCode % 5) + 3;
@@ -1554,23 +1537,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center space-x-2">
-                                                    <button onClick={() => toggleSubscription(selectedIpoDetails.ticker)} className={`px-6 py-3 text-sm font-extrabold rounded-2xl transition-all shadow-lg flex items-center space-x-2 ${subs.includes(selectedIpoDetails.ticker) ? 'bg-gojek-600 text-white hover:bg-gojek-700 shadow-gojek-200 dark:shadow-gojek-900/50 scale-105' : 'bg-gojek-50 dark:bg-gojek-900/20 text-gojek-600 dark:text-gojek-400 border border-gojek-200 dark:border-gojek-800 hover:bg-gojek-100 dark:hover:bg-gojek-900/40 shadow-none'}`}>
-                                                        {subs.includes(selectedIpoDetails.ticker) ? (
-                                                            <>
-                                                                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path fillRule="evenodd" d="M12 2.25A6.75 6.75 0 005.25 9v.75a8.967 8.967 0 01-2.312 6.022c-.55.655-.046 1.728.803 1.728h16.518c.849 0 1.353-1.073.803-1.728A8.967 8.967 0 0118.75 9.75V9A6.75 6.75 0 0012 2.25zM12.75 22.5h-1.5a2.25 2.25 0 012.25-2.25h-1.5a2.25 2.25 0 010 4.5z" clipRule="evenodd" />
-                                                                </svg>
-                                                                <span>Udah Antri</span>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                                                                </svg>
-                                                                <span>Ingetin Nanti</span>
-                                                            </>
-                                                        )}
-                                                    </button>
                                                     <button onClick={() => setSelectedIpoDetails(null)} className="p-3 text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-800 rounded-xl transition-colors ml-2">
                                                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                                     </button>
