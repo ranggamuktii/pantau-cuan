@@ -84,7 +84,8 @@ class GoogleAuthController extends Controller
 
             Auth::login($user);
 
-            return redirect()->intended(route('dashboard', absolute: false));
+            return redirect()->intended(route('dashboard', absolute: false))
+                ->with('success', 'Berhasil masuk pake Google! Gas cari cuan bos!');
         } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage());
             return redirect('/login')->with('error', 'Waduh, ada yang salah pas login pake Google nih. Coba lagi ya!');

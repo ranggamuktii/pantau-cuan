@@ -69,6 +69,12 @@ export default function Login({ status }) {
                 body: JSON.stringify({ token }),
             });
 
+            if (response.status === 419) {
+                alert("Sesi sudah kedaluwarsa. Halaman akan dimuat ulang otomatis...");
+                window.location.reload();
+                return;
+            }
+
             const data = await response.json().catch(() => ({}));
 
             if (!response.ok) {
