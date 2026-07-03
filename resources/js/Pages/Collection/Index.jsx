@@ -62,52 +62,46 @@ export default function CollectionIndex({ accountSids }) {
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex-1 w-full flex flex-col">
                 
                 {/* Legend & Filter Section */}
-                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 mb-10 shadow-sm">
-                    <h2 className="text-lg font-bold text-zinc-800 dark:text-zinc-100 mb-6">Pahami Status Kartu Koleksi Lu!</h2>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                        {/* Shiny Legend */}
-                        <div className="flex items-start space-x-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-900/50">
-                            <div className="w-10 h-10 shrink-0 rounded-full bg-amber-400/20 text-amber-500 flex items-center justify-center">
-                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-5 md:p-6 mb-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm">
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-500 flex items-center justify-center shrink-0 border border-amber-100 dark:border-amber-900/50">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                </div>
+                                <div className="leading-tight">
+                                    <div className="font-bold text-zinc-800 dark:text-zinc-200">Shiny</div>
+                                    <div className="text-[10px] text-zinc-500 font-medium">Jual Cuan</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className="font-bold text-amber-700 dark:text-amber-400 mb-1">Shiny (Cuan)</div>
-                                <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-snug">Saham yang udah lu jual dan menghasilkan profit/cuan. Kartu bakal bersinar!</div>
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800/50 text-zinc-500 flex items-center justify-center shrink-0 border border-zinc-200 dark:border-zinc-700/50">
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                                </div>
+                                <div className="leading-tight">
+                                    <div className="font-bold text-zinc-800 dark:text-zinc-200">Retak</div>
+                                    <div className="text-[10px] text-zinc-500 font-medium">Jual Boncos</div>
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Retak Legend */}
-                        <div className="flex items-start space-x-4 p-4 rounded-2xl bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50">
-                            <div className="w-10 h-10 shrink-0 rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-400 flex items-center justify-center">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            </div>
-                            <div>
-                                <div className="font-bold text-zinc-700 dark:text-zinc-300 mb-1">Retak (Boncos)</div>
-                                <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-snug">Saham yang lu cut-loss atau jual rugi. Kartunya kusam dan layarnya retak.</div>
-                            </div>
-                        </div>
-
-                        {/* Aktif Legend */}
-                        <div className="flex items-start space-x-4 p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-900/50">
-                            <div className="w-10 h-10 shrink-0 rounded-full bg-blue-400/20 text-blue-500 flex items-center justify-center">
-                                <svg className="w-5 h-5 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                            </div>
-                            <div>
-                                <div className="font-bold text-blue-700 dark:text-blue-400 mb-1">Aktif (Hold)</div>
-                                <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-snug">Saham yang saat ini masih lu pegang/tahan di portofolio.</div>
+                            <div className="flex items-center space-x-2">
+                                <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-500 flex items-center justify-center shrink-0 border border-blue-100 dark:border-blue-900/50">
+                                    <svg className="w-4 h-4 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                </div>
+                                <div className="leading-tight">
+                                    <div className="font-bold text-zinc-800 dark:text-zinc-200">Aktif</div>
+                                    <div className="text-[10px] text-zinc-500 font-medium">Masih Hold</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Filters */}
-                    <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 dark:border-zinc-800 pt-6">
-                        <span className="text-sm font-bold text-zinc-500 dark:text-zinc-400 mr-2">Filter:</span>
+                    <div className="flex flex-wrap items-center gap-2">
                         {[
-                            { id: 'all', label: 'Semua Koleksi', count: ipoCollection.length },
-                            { id: 'shiny', label: 'Shiny Only', count: ipoCollection.filter(i => i.has_closed && i.net_profit > 0).length },
-                            { id: 'retak', label: 'Retak Only', count: ipoCollection.filter(i => i.has_closed && i.net_profit <= 0).length },
-                            { id: 'aktif', label: 'Aktif Only', count: ipoCollection.filter(i => !i.has_closed).length },
+                            { id: 'all', label: 'Semua', count: ipoCollection.length },
+                            { id: 'shiny', label: 'Shiny', count: ipoCollection.filter(i => i.has_closed && i.net_profit > 0).length },
+                            { id: 'retak', label: 'Retak', count: ipoCollection.filter(i => i.has_closed && i.net_profit <= 0).length },
+                            { id: 'aktif', label: 'Aktif', count: ipoCollection.filter(i => !i.has_closed).length },
                         ].map(f => (
                             <button 
                                 key={f.id} 
