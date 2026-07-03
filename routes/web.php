@@ -22,6 +22,9 @@ Route::get('/wrapped/{token}', [WrappedController::class, 'showPublic'])->name('
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
+    // Album Koleksi
+    Route::get('/collection', [\App\Http\Controllers\CollectionController::class, 'index'])->name('collection.index');
+    
     // Internal Wrapped
     Route::get('/wrapped', [WrappedController::class, 'index'])->name('wrapped.index');
 

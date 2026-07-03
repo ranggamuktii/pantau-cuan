@@ -213,7 +213,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         return { name: 'Anak Sultan', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>, color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30', next: null, nextName: null, min: 10000000 };
     };
 
-    const totalGlobalNetProfit = accountSids.reduce((acc, sid) => acc + sid.transactions.filter(t => t.status === 'closed').reduce((sum, trx) => sum + trx.net_profit, 0), 0);
+    const totalGlobalNetProfit = accountSids.reduce((acc, sid) => acc + sid.transactions.filter(t => t.status === 'closed').reduce((sum, trx) => sum + (Number(trx.net_profit) || 0), 0), 0);
     const currentTier = getTierLevel(totalGlobalNetProfit);
 
     // Calculate Album Koleksi IPO
@@ -995,60 +995,25 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                             )}
                         </div>
 
-                        {/* 7. Album Koleksi IPO */}
-                        <div className={`${mobileTab === 'collection' ? 'block' : 'hidden'} xl:block bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 rounded-[1.5rem] shadow-sm`}>
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-bold text-zinc-800 dark:text-zinc-100 flex items-center space-x-2">
-                                    <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
-                                    <span>Album Koleksi</span>
-                                </h2>
-                                <div className="text-xs font-bold text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full">{ipoCollection.length} Stiker</div>
-                            </div>
-                            
-                            {ipoCollection.length > 0 ? (
-                                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-2 gap-4">
-                                    {ipoCollection.map((item, idx) => (
-                                        <div key={idx} className={`relative rounded-2xl border p-4 flex flex-col items-center justify-center aspect-[3/4] overflow-hidden group transition-all duration-300
-                                            ${item.has_closed 
-                                                ? (item.net_profit > 0 ? 'border-amber-400 bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/40 dark:to-amber-800/20 shadow-[0_4px_20px_rgba(251,191,36,0.3)] hover:shadow-[0_8px_30px_rgba(251,191,36,0.5)] hover:-translate-y-1.5' 
-                                                : 'border-zinc-300 dark:border-zinc-700 bg-zinc-100 dark:bg-zinc-800/50 grayscale hover:grayscale-0 opacity-75 hover:opacity-100 shadow-sm hover:shadow-md hover:-translate-y-1')
-                                                : 'border-blue-200 dark:border-blue-900/50 bg-blue-50/50 dark:bg-blue-900/10 border-dashed hover:border-solid hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md hover:-translate-y-1'
-                                            }
-                                        `}>
-                                            {item.has_closed && item.net_profit > 0 && (
-                                                <>
-                                                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-200/50 via-transparent to-transparent opacity-70"></div>
-                                                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/60 dark:via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite] skew-x-12 z-10 pointer-events-none"></div>
-                                                </>
-                                            )}
-                                            {item.has_closed && item.net_profit <= 0 && (
-                                                <svg className="absolute inset-0 w-full h-full text-zinc-300/30 dark:text-zinc-700/30 pointer-events-none" fill="none" viewBox="0 0 100 100" preserveAspectRatio="none">
-                                                    <path stroke="currentColor" strokeWidth="2" d="M10,0 L30,40 L15,50 L50,80 L40,100" />
-                                                </svg>
-                                            )}
-                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-zinc-800 shadow-md border-2 border-white/50 dark:border-zinc-700 flex items-center justify-center p-2 mb-3 z-0 relative shrink-0">
-                                                <img src={`https://assets.stockbit.com/logos/companies/${item.stock.stock_code}.png`} alt={item.stock.stock_code} className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }} loading="lazy" />
-                                            </div>
-                                            <div className="text-sm font-black text-zinc-800 dark:text-zinc-100 z-0 text-center w-full truncate px-1 tracking-tight">{item.stock.stock_code}</div>
-                                            
-                                            <div className="mt-3 text-[10px] font-black z-0 text-center w-full flex justify-center">
-                                                {item.has_closed ? (
-                                                    item.net_profit > 0 
-                                                        ? <span className="flex items-center space-x-1 text-amber-700 dark:text-amber-400 bg-amber-200/80 dark:bg-amber-900/60 px-2 py-1 rounded-md shadow-sm border border-amber-300/50 dark:border-amber-700/50 backdrop-blur-sm"><svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg> <span>SHINY</span></span>
-                                                        : <span className="flex items-center space-x-1 text-zinc-600 dark:text-zinc-400 bg-zinc-200 dark:bg-zinc-800/80 px-2 py-1 rounded-md shadow-sm border border-zinc-300/50 dark:border-zinc-700/50"><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> <span>RETAK</span></span>
-                                                ) : (
-                                                    <span className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 bg-blue-100/80 dark:bg-blue-900/50 px-2 py-1 rounded-md shadow-sm border border-blue-200/50 dark:border-blue-800/50"><svg className="w-3.5 h-3.5 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> <span>AKTIF</span></span>
-                                                )}
-                                            </div>
+                        {/* 7. Album Koleksi IPO Banner */}
+                        <div className={`${mobileTab === 'collection' ? 'block' : 'hidden'} xl:block`}>
+                            <Link href={route('collection.index')} className="group block relative overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-[1.5rem] p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/50 dark:hover:border-amber-600/50">
+                                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-orange-600/5 dark:from-amber-400/10 dark:to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full blur-3xl opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                                
+                                <div className="relative z-10 flex items-center justify-between">
+                                    <div className="flex-1">
+                                        <div className="flex items-center space-x-2 mb-2">
+                                            <svg className="w-6 h-6 text-amber-500 drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                            <h2 className="text-xl font-black text-zinc-800 dark:text-zinc-100">Album Koleksi</h2>
                                         </div>
-                                    ))}
+                                        <p className="text-sm text-zinc-600 dark:text-zinc-400 font-medium">Buka buku koleksi lo dan cek kartu-kartu hasil trading IPO lu sekarang! ✨</p>
+                                    </div>
+                                    <div className="ml-4 w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center shrink-0 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/40 transition-colors">
+                                        <svg className="w-5 h-5 text-zinc-400 dark:text-zinc-500 group-hover:text-amber-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
+                                    </div>
                                 </div>
-                            ) : (
-                                <div className="text-center py-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-700">
-                                    <svg className="mx-auto h-10 w-10 text-zinc-300 dark:text-zinc-600 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                                    <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Album masih kosong, belum ada stiker.</p>
-                                </div>
-                            )}
+                            </Link>
                         </div>
 
                     </div>
