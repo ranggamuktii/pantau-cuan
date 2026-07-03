@@ -1031,15 +1031,20 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                         value={stock}
                                                                     >
                                                                         {({ selected, active }) => {
-                                                                            const isOffering = activeIpos?.some(ipo => ipo.ticker === stock);
+                                                                            const activeIpoInfo = activeIpos?.find(ipo => ipo.ticker === stock);
+                                                                            const isOffering = activeIpoInfo?.status === 'Offering';
+                                                                            const isClosedIpo = activeIpoInfo?.status === 'Closed';
+
                                                                             return (
                                                                                 <>
                                                                                     <div className="flex items-center justify-between">
                                                                                         <span className={`block truncate ${selected ? 'font-bold' : 'font-medium'} ${isOffering ? 'text-zinc-900 dark:text-white' : 'text-zinc-500 dark:text-zinc-400'}`}>{stock}</span>
                                                                                         {isOffering ? (
                                                                                             <span className="text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded uppercase tracking-wider">Lagi IPO</span>
+                                                                                        ) : isClosedIpo ? (
+                                                                                            <span className="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-0.5 rounded uppercase tracking-wider">IPO Tutup</span>
                                                                                         ) : (
-                                                                                            <span className="text-[10px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-2 py-0.5 rounded uppercase tracking-wider">Tutup</span>
+                                                                                            <span className="text-[10px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 px-2 py-0.5 rounded uppercase tracking-wider">Saham Biasa</span>
                                                                                         )}
                                                                                     </div>
                                                                                     {selected ? (
