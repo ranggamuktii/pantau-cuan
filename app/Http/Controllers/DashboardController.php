@@ -13,10 +13,14 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         
-        // Eager load everything needed for the dashboard
-        $accountSids = AccountSid::with(['transactions.stock'])
-            ->where('user_id', $user->id)
-            ->get();
+        // Eager load everything needed for the dashboard if user is authenticated
+        if ($user) {
+            $accountSids = AccountSid::with(['transactions.stock'])
+                ->where('user_id', $user->id)
+                ->get();
+        } else {
+            $accountSids = collect();
+        }
 
         $totalCapital = 0;
         $totalCurrentValue = 0;

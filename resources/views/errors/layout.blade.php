@@ -35,27 +35,29 @@
         }
     </script>
 </head>
-<body class="antialiased bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center min-h-screen p-6">
-    <div class="max-w-md w-full text-center">
+<body class="antialiased bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center min-h-screen p-4">
+    <div class="max-w-md w-full text-center space-y-6">
         <!-- Logo -->
-        <div class="mb-8 flex justify-center">
-            <div class="w-16 h-16 bg-gojek-600 rounded-2xl flex items-center justify-center rotate-3 shadow-lg shadow-gojek-500/30">
-                <svg class="w-10 h-10 text-white -rotate-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        <div class="flex justify-center opacity-90">
+            <div class="w-14 h-14 bg-@yield('color', 'gojek')-500 rounded-2xl flex items-center justify-center rotate-3 shadow-lg shadow-@yield('color', 'gojek')-500/20">
+                <svg class="w-7 h-7 text-white -rotate-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
             </div>
         </div>
 
-        <h1 class="text-6xl font-extrabold text-zinc-900 dark:text-white mb-4 tracking-tighter">@yield('code')</h1>
-        <h2 class="text-2xl font-bold mb-4 text-gojek-600 dark:text-gojek-400">@yield('title')</h2>
-        <p class="text-zinc-500 dark:text-zinc-400 mb-8 font-medium">@yield('message')</p>
+        <div>
+            <h1 class="text-7xl font-extrabold text-zinc-900 dark:text-white tracking-tighter">@yield('code')</h1>
+            <h2 class="text-xl font-bold mt-2 text-@yield('color', 'gojek')-600 dark:text-@yield('color', 'gojek')-400">@yield('title')</h2>
+        </div>
+        
+        <p class="text-zinc-500 dark:text-zinc-400 text-sm font-medium px-4">@yield('message')</p>
 
-        <a href="/" class="inline-flex items-center px-6 py-3 bg-gojek-600 hover:bg-gojek-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-gojek-500/30 hover:scale-105 active:scale-95">
-            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali ke Dashboard
-        </a>
+        <div class="pt-2">
+            <a href="/" class="inline-flex items-center px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 font-bold rounded-xl transition-all shadow hover:-translate-y-0.5 active:scale-95 text-sm">
+                Beranda
+            </a>
+        </div>
     </div>
 </body>
 </html>

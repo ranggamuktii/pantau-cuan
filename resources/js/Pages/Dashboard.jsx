@@ -315,33 +315,50 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                         </div>
                         <div className="flex items-center space-x-2 md:space-x-6 shrink-0">
                             <div className="flex items-center space-x-2 md:space-x-4">
-                                {auth.user.avatar ? (
-                                    <img src={auth.user.avatar} alt="Avatar" className="w-7 h-7 rounded-full border border-zinc-200 dark:border-zinc-800 shadow-sm object-cover" />
-                                ) : (
-                                    <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gojek-500 to-gojek-400 p-0.5 shadow-sm shrink-0">
-                                        <div className="w-full h-full bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center">
-                                            <svg className="w-4 h-4 text-gojek-500 dark:text-gojek-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
+                                {auth.user ? (
+                                    <>
+                                        {auth.user.avatar ? (
+                                            <img src={auth.user.avatar} alt="Avatar" className="w-7 h-7 rounded-full border border-zinc-200 dark:border-zinc-800 shadow-sm object-cover" />
+                                        ) : (
+                                            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-gojek-500 to-gojek-400 p-0.5 shadow-sm shrink-0">
+                                                <div className="w-full h-full bg-white dark:bg-zinc-900 rounded-full flex items-center justify-center">
+                                                    <svg className="w-4 h-4 text-gojek-500 dark:text-gojek-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="hidden sm:flex flex-col justify-center">
+                                            <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200 leading-tight whitespace-nowrap">{auth.user.name}</span>
                                         </div>
-                                    </div>
+                                        <div className="w-px h-5 md:h-6 bg-zinc-200 dark:bg-zinc-800 mx-1 md:mx-2 hidden sm:block"></div>
+                                        <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-zinc-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors" title="Toggle Theme">
+                                            {isDarkMode ? (
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                            ) : (
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                                            )}
+                                        </button>
+                                        <Link href={route('logout')} method="post" as="button" className="p-2 text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" title="Logout">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-zinc-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors" title="Toggle Theme">
+                                            {isDarkMode ? (
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                            ) : (
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                                            )}
+                                        </button>
+                                        <Link href={route('login')} className="ml-2 inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 rounded-lg hover:bg-gojek-600 shadow-sm">
+                                            Login
+                                        </Link>
+                                    </>
                                 )}
-                                <div className="hidden sm:flex flex-col justify-center">
-                                    <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200 leading-tight whitespace-nowrap">{auth.user.name}</span>
-                                </div>
-                                <div className="w-px h-5 md:h-6 bg-zinc-200 dark:bg-zinc-800 mx-1 md:mx-2 hidden sm:block"></div>
-                                <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-zinc-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors" title="Toggle Theme">
-                                    {isDarkMode ? (
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                                    ) : (
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                                    )}
-                                </button>
-                                <Link href={route('logout')} method="post" as="button" className="p-2 text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/30 rounded-lg transition-colors" title="Logout">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                                    </svg>
-                                </Link>
                             </div>
                         </div>
                     </div>
@@ -436,16 +453,37 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         )}
                                         <span>{isSyncing ? 'Lagi Update...' : 'Update Harga'}</span>
                                     </button>
-                                    <button
-                                        onClick={() => setIsSidModalOpen(true)}
-                                        className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
-                                    >
-                                        <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
-                                        Tambah Akun SID
-                                    </button>
+                                    {auth.user ? (
+                                        <button
+                                            onClick={() => setIsSidModalOpen(true)}
+                                            className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
+                                        >
+                                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                                            Tambah Akun SID
+                                        </button>
+                                    ) : (
+                                        <Link
+                                            href={route('login')}
+                                            className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
+                                        >
+                                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                            Login Buat Pantau
+                                        </Link>
+                                    )}
                                 </div>
                             </div>
-                            {accountSids.length === 0 ? (
+                            {!auth.user ? (
+                                <div className="bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-[1.5rem] p-12 text-center">
+                                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 mb-4">
+                                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                                    </div>
+                                    <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100">Login Dulu Bro!</h3>
+                                    <p className="mt-1 text-zinc-500 dark:text-zinc-400">Buat bisa pakai fitur Tracker Portofolio, lo harus login dulu ya.</p>
+                                    <Link href={route('login')} className="inline-block mt-6 px-5 py-2.5 bg-gojek-500 text-white rounded-lg font-medium hover:bg-gojek-600 transition-colors shadow-sm">
+                                        Login Pakai Google
+                                    </Link>
+                                </div>
+                            ) : accountSids.length === 0 ? (
                                 <div className="bg-white dark:bg-zinc-900 border border-dashed border-zinc-300 dark:border-zinc-700 rounded-[1.5rem] p-12 text-center">
                                     <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 mb-4">
                                         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
@@ -1522,8 +1560,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             {/* Header */}
                                             <div className="p-6 border-b border-zinc-100 dark:border-zinc-800 flex items-start justify-between shrink-0 bg-zinc-50 dark:bg-zinc-900">
                                                 <div className="flex items-center space-x-4">
-                                                    <div className="w-20 h-20 bg-white dark:bg-zinc-900 rounded-full shadow-md border-4 border-zinc-200 dark:border-zinc-800 flex items-center justify-center p-1.5 shrink-0 relative overflow-hidden group/modalimg">
-                                                        <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-800 animate-pulse transition-opacity duration-500 group-[.loaded]/modalimg:opacity-0 pointer-events-none rounded-full"></div>
+                                                    <div className="w-20 h-20 bg-white rounded-full shadow-md border-4 border-zinc-200 dark:border-zinc-700 flex items-center justify-center p-1.5 shrink-0 relative overflow-hidden group/modalimg">
+                                                        <div className="absolute inset-0 bg-zinc-100 animate-pulse transition-opacity duration-500 group-[.loaded]/modalimg:opacity-0 pointer-events-none rounded-full"></div>
                                                         <img src={`https://e-ipo.co.id${selectedIpoDetails.links?.logo}`} alt={selectedIpoDetails.ticker} className="w-full h-full object-contain rounded-full opacity-0 transition-opacity duration-700 relative z-10" onLoad={(e) => { e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${selectedIpoDetails.ticker}&background=random&color=fff`; e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} />
                                                     </div>
                                                     <div>

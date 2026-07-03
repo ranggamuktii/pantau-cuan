@@ -9,13 +9,11 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
-Route::get('/pantau-cuan-logo', function () {
-    return response()->file('C:\Users\Rangga Mukti\Downloads\ChatGPT Image 2 Jul 2026, 23.09.19.png');
-});
+
 
 use App\Http\Controllers\DashboardController;
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 use App\Http\Controllers\AccountSidController;
 use App\Http\Controllers\TransactionController;
