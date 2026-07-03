@@ -41,6 +41,7 @@ const useCountdown = (targetDateStr) => {
     return timeLeft;
 };
 
+const FALLBACK_LOGO = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='2' width='16' height='20' rx='2' ry='2'/%3E%3Cpath d='M9 22v-4h6v4'/%3E%3Cpath d='M8 6h.01'/%3E%3Cpath d='M16 6h.01'/%3E%3Cpath d='M12 6h.01'/%3E%3Cpath d='M12 10h.01'/%3E%3Cpath d='M12 14h.01'/%3E%3Cpath d='M16 10h.01'/%3E%3Cpath d='M16 14h.01'/%3E%3Cpath d='M8 10h.01'/%3E%3Cpath d='M8 14h.01'/%3E%3C/svg%3E";
 
 const BROKERS = [
     { id: "PT Ajaib Sekuritas Asia (XC)", name: "Ajaib Sekuritas (XC)" },
@@ -955,9 +956,9 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 }
                                             }} className="group w-full text-left block border border-zinc-200 dark:border-zinc-800 p-4 rounded-xl hover:border-gojek-300 dark:hover:border-gojek-700 hover:bg-gojek-50/50 dark:hover:bg-gojek-900/20 transition-colors bg-white dark:bg-zinc-900 cursor-pointer">
                                                 <div className="flex items-center space-x-4 mb-3">
-                                                    <div className="w-12 h-12 bg-white rounded-full shadow-sm border-[3px] border-zinc-200 dark:border-zinc-700 flex items-center justify-center p-1 shrink-0 relative overflow-hidden group/img">
+                                                    <div className="w-12 h-12 bg-white rounded-full shadow-sm border-[3px] border-zinc-200 dark:border-zinc-700 flex items-center justify-center p-1.5 shrink-0 relative overflow-hidden group/img">
                                                         <div className="absolute inset-0 bg-zinc-100 dark:bg-zinc-800 animate-pulse transition-opacity duration-500 group-[.loaded]/img:opacity-0 pointer-events-none rounded-full"></div>
-                                                        <img src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`} alt={ipo.ticker} className="w-full h-full object-contain rounded-full opacity-0 transition-opacity duration-700 relative z-10" onLoad={(e) => { e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ipo.ticker}&background=random&color=57534e`; e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} loading="lazy" />
+                                                        <img src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`} alt={ipo.ticker} className="w-full h-full object-contain rounded-full opacity-0 transition-opacity duration-700 relative z-10" onLoad={(e) => { e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} loading="lazy" />
                                                     </div>
                                                     <div className="flex-1">
                                                         <h3 className="font-black text-zinc-800 dark:text-white text-lg group-hover:text-gojek-600 dark:group-hover:text-gojek-400 transition-colors leading-none">{ipo.ticker}</h3>
@@ -1023,8 +1024,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                     <path stroke="currentColor" strokeWidth="2" d="M10,0 L30,40 L15,50 L50,80 L40,100" />
                                                 </svg>
                                             )}
-                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-zinc-800 shadow-md border-2 border-white/50 dark:border-zinc-700 flex items-center justify-center p-1.5 mb-3 z-0 relative shrink-0">
-                                                <img src={`https://e-ipo.co.id/id/pipeline/get-logo?id=${item.stock.stock_code}`} alt={item.stock.stock_code} className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${item.stock.stock_code}&background=random&color=57534e`; }} loading="lazy" />
+                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white dark:bg-zinc-800 shadow-md border-2 border-white/50 dark:border-zinc-700 flex items-center justify-center p-2 mb-3 z-0 relative shrink-0">
+                                                <img src={`https://assets.stockbit.com/logos/companies/${item.stock.stock_code}.png`} alt={item.stock.stock_code} className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_LOGO; }} loading="lazy" />
                                             </div>
                                             <div className="text-sm font-black text-zinc-800 dark:text-zinc-100 z-0 text-center w-full truncate px-1 tracking-tight">{item.stock.stock_code}</div>
                                             
