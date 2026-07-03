@@ -18,20 +18,7 @@ class TransactionController extends Controller
             'lots' => 'required|integer|min:1',
         ]);
 
-        // STRICT IPO VALIDATION
-        $activeIposPath = storage_path('app/active_ipos.json');
-        if (file_exists($activeIposPath)) {
-            $activeIpos = json_decode(file_get_contents($activeIposPath), true) ?? [];
-            $ipoRecord = collect($activeIpos)->firstWhere('ticker', strtoupper($validated['stock_code']));
 
-            if (!$ipoRecord) {
-                return redirect()->back()->with('error', "Waduh, saham {$validated['stock_code']} nggak ketemu di daftar IPO yang lagi aktif nih.");
-            }
-
-            if ($ipoRecord['status'] !== 'Offering' && $ipoRecord['status'] !== 'Book Building') {
-                return redirect()->back()->with('error', "Waduh, masa penawaran saham {$ipoRecord['ticker']} udah tutup ({$ipoRecord['status']}) nih.");
-            }
-        }
 
         // Ensure user owns the SID
         $sid = AccountSid::where('id', $validated['account_sid_id'])

@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/sync-prices', [StockSyncController::class, 'sync'])->name('stocks.sync');
     Route::post('/stocks/{stock}/update-price', [StockSyncController::class, 'updatePrice'])->name('stocks.updatePrice');
+    Route::get('/api/stocks/{ticker}/live-price', [StockSyncController::class, 'getLivePrice'])->name('stocks.livePrice');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

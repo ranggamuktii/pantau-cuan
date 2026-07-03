@@ -999,11 +999,25 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         <div className="relative z-20">
                                             <label className="block text-sm font-bold text-zinc-700 dark:text-zinc-300 mb-2">Kode Saham</label>
                                             <Combobox value={trxData.stock_code} onChange={val => {
-                                                const activeIpo = activeIpos?.find(ipo => ipo.ticker === val);
-                                                let ipoPriceStr = activeIpo?.price || '';
-                                                let ipoPriceNum = ipoPriceStr.replace(/[^0-9]/g, '');
+                                                const activeIpoInfo = activeIpos?.find(ipo => ipo.ticker === val);
+                                                const isOffering = activeIpoInfo?.status === 'Offering';
 
-                                                setTrxData({ ...trxData, stock_code: val, ipo_price: ipoPriceNum });
+                                                if (isOffering) {
+                                                    let ipoPriceStr = activeIpoInfo?.price || '';
+                                                    let ipoPriceNum = ipoPriceStr.replace(/[^0-9]/g, '');
+                                                    setTrxData({ ...trxData, stock_code: val, ipo_price: ipoPriceNum });
+                                                } else {
+                                                    setTrxData({ ...trxData, stock_code: val, ipo_price: '' });
+                                                    if (val) {
+                                                        window.axios.get(`/api/stocks/${val}/live-price`)
+                                                            .then(res => {
+                                                                if (res.data.price) {
+                                                                    setTrxData(prev => ({ ...prev, ipo_price: res.data.price }));
+                                                                }
+                                                            })
+                                                            .catch(err => console.error('Gagal fetch harga live', err));
+                                                    }
+                                                }
                                             }}>
                                                 <div className="relative mt-1">
                                                     <div className="relative w-full cursor-default overflow-hidden rounded-2xl bg-zinc-50/50 dark:bg-zinc-900 text-left border border-zinc-200 dark:border-zinc-700 focus-within:border-gojek-500 focus-within:ring-1 focus-within:ring-gojek-500 transition-colors sm:text-sm">
@@ -1075,9 +1089,9 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                         value={trxData.ipo_price} 
                                                         onChange={e => setTrxData('ipo_price', e.target.value)} 
                                                         required 
-                                                        readOnly={activeIpos?.some(ipo => ipo.ticker === trxData.stock_code)} 
-                                                        className={`w-full rounded-2xl border-zinc-200 dark:border-zinc-700 focus:border-gojek-500 focus:ring-gojek-500 transition-colors pl-9 pr-3 py-3 font-semibold shadow-inner ${activeIpos?.some(ipo => ipo.ticker === trxData.stock_code) ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 cursor-not-allowed' : 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white cursor-text'}`} 
-                                                        placeholder={activeIpos?.some(ipo => ipo.ticker === trxData.stock_code) ? "Otomatis" : "Misal: 500"} 
+                                                        readOnly={activeIpos?.find(ipo => ipo.ticker === trxData.stock_code)?.status === 'Offering'} 
+                                                        className={`w-full rounded-2xl border-zinc-200 dark:border-zinc-700 focus:border-gojek-500 focus:ring-gojek-500 transition-colors pl-9 pr-3 py-3 font-semibold shadow-inner ${activeIpos?.find(ipo => ipo.ticker === trxData.stock_code)?.status === 'Offering' ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 cursor-not-allowed' : 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white cursor-text'}`} 
+                                                        placeholder={activeIpos?.find(ipo => ipo.ticker === trxData.stock_code)?.status === 'Offering' ? "Otomatis" : "Misal: 500"} 
                                                     />
                                                 </div>
                                             </div>

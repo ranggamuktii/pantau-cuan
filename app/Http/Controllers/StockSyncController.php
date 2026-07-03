@@ -38,4 +38,13 @@ class StockSyncController extends Controller
 
         return redirect()->back()->with('success', 'Mantap, harga saham berhasil di-update manual!');
     }
+    public function getLivePrice(Request $request, $ticker, YahooFinanceService $financeService)
+    {
+        $livePrice = $financeService->getCurrentPrice($ticker);
+        
+        return response()->json([
+            'ticker' => $ticker,
+            'price' => $livePrice
+        ]);
+    }
 }
