@@ -1,8 +1,10 @@
 import { Link } from '@inertiajs/react';
+import Toast from '@/Components/Toast';
 
 export default function GuestLayout({ children }) {
     return (
         <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-zinc-950 px-4 py-8 relative overflow-hidden transition-colors duration-300">
+            <Toast />
             {/* Background Ornaments */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-gojek-500/20 dark:bg-gojek-500/10 rounded-full blur-3xl opacity-50 mix-blend-multiply dark:mix-blend-lighten animate-blob"></div>
@@ -12,8 +14,8 @@ export default function GuestLayout({ children }) {
 
             <div className="z-10 text-center mb-6 sm:mb-8">
                 <Link href="/" className="inline-block group">
-                    <div className="w-20 h-20 bg-gradient-to-tr from-gojek-600 to-gojek-400 rounded-3xl flex items-center justify-center rotate-3 shadow-xl shadow-gojek-500/40 mx-auto transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105">
-                        <svg className="w-12 h-12 text-white -rotate-3 transition-transform duration-300 group-hover:rotate-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <div className="w-20 h-20 bg-gradient-to-tr from-emerald-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-xl shadow-emerald-500/40 mx-auto transition-transform duration-300 group-hover:scale-105">
+                        <svg className="w-12 h-12 text-white transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                         </svg>
                     </div>

@@ -206,11 +206,11 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     const [isTierModalOpen, setIsTierModalOpen] = useState(false);
 
     const getTierLevel = (netProfit) => {
-        if (netProfit <= 0) return { name: 'Kuli Pasar', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>, color: 'text-zinc-500 dark:text-zinc-400', bg: 'bg-zinc-100 dark:bg-zinc-800', next: 500000, nextName: 'Pedagang Asongan', min: 0 };
-        if (netProfit <= 500000) return { name: 'Pedagang Asongan', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>, color: 'text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30', next: 2000000, nextName: 'Juragan ARA', min: 0 };
-        if (netProfit <= 2000000) return { name: 'Juragan ARA', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', next: 10000000, nextName: 'Bandar Cilik', min: 500000 };
-        if (netProfit <= 10000000) return { name: 'Bandar Cilik', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30', next: 50000000, nextName: 'Anak Sultan', min: 2000000 };
-        return { name: 'Anak Sultan', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>, color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30', next: null, nextName: null, min: 10000000 };
+        if (netProfit <= 0) return { name: 'Kuli Pasar', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-3-11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm8-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-2.88 5.76a.75.75 0 0 0-1.24 0A4.996 4.996 0 0 0 12 17a4.996 4.996 0 0 0-1.88-2.24.75.75 0 0 0-1.24.01" clipRule="evenodd" /></svg>, color: 'text-zinc-500 dark:text-zinc-400', bg: 'bg-zinc-100 dark:bg-zinc-800', next: 500000, nextName: 'Pedagang Asongan', min: 0 };
+        if (netProfit <= 500000) return { name: 'Pedagang Asongan', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v2.5a.5.5 0 01-.5.5h-17a.5.5 0 01-.5-.5V6zm-1.5 5a1.5 1.5 0 011.5-1.5h18a1.5 1.5 0 011.5 1.5v7a3 3 0 01-3 3H4.5a3 3 0 01-3-3v-7zm7.5 1a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1h-4z" clipRule="evenodd" /></svg>, color: 'text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30', next: 2000000, nextName: 'Juragan ARA', min: 0 };
+        if (netProfit <= 2000000) return { name: 'Juragan ARA', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M2.25 2.25a.75.75 0 0 0 0 1.5v16.5a.75.75 0 0 0 .75.75h16.5a.75.75 0 0 0 0-1.5H3.75V3.75a.75.75 0 0 0-.75-.75Zm5.213 11.287 4.5-4.5 2.53 2.53a.75.75 0 0 0 1.06 0l5-5a.75.75 0 1 0-1.06-1.06l-4.47 4.47-2.53-2.53a.75.75 0 0 0-1.06 0l-5 5a.75.75 0 0 0 1.06 1.06Z" clipRule="evenodd" /></svg>, color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', next: 10000000, nextName: 'Bandar Cilik', min: 500000 };
+        if (netProfit <= 10000000) return { name: 'Bandar Cilik', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.36-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm3-1.5a1.5 1.5 0 00-1.5 1.5v.149c1-.1 2-.17 3-.205v-.149c0-.828-.672-1.5-1.5-1.5z" clipRule="evenodd" /><path d="M2.25 13.918c1.385.498 2.864.876 4.412 1.121A26.177 26.177 0 0012 17.25a26.177 26.177 0 005.338-.561 24.73 24.73 0 004.412-1.121v3.918c0 1.434-1.022 2.7-2.476 2.917A48.796 48.796 0 0112 22.5c-2.43 0-4.817-.178-7.152-.52-1.454-.218-2.476-1.483-2.476-2.917v-3.918z" /></svg>, color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30', next: 50000000, nextName: 'Anak Sultan', min: 2000000 };
+        return { name: 'Anak Sultan', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" /></svg>, color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30', next: null, nextName: null, min: 10000000 };
     };
 
     const totalGlobalNetProfit = accountSids.reduce((acc, sid) => acc + sid.transactions.filter(t => t.status === 'closed').reduce((sum, trx) => sum + (Number(trx.net_profit) || 0), 0), 0);
@@ -2007,9 +2007,9 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                     <div className="fixed inset-0 overflow-y-auto">
                         <div className="flex min-h-full items-center justify-center p-4 text-center">
                             <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
-                                    <div className="flex items-center justify-between mb-6">
-                                        <Dialog.Title as="h3" className="text-xl font-black text-zinc-900 dark:text-white">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-6 sm:p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
+                                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                        <Dialog.Title as="h3" className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white">
                                             Pangkat Bandar Lu
                                         </Dialog.Title>
                                         <button onClick={() => setIsTierModalOpen(false)} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 p-2 rounded-full transition-colors">
@@ -2017,54 +2017,54 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         </button>
                                     </div>
 
-                                    <div className="flex flex-col items-center justify-center mb-8">
-                                        <div className={`w-24 h-24 rounded-full ${currentTier.bg} border-4 border-white dark:border-zinc-800 flex items-center justify-center mb-4 shadow-xl`}>
-                                            <span className={`${currentTier.color} scale-150`}>{currentTier.icon}</span>
+                                    <div className="flex flex-col items-center justify-center mb-6">
+                                        <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full ${currentTier.bg} border-4 border-white dark:border-zinc-800 flex items-center justify-center mb-3 sm:mb-4 shadow-xl`}>
+                                            <span className={`${currentTier.color} scale-125 sm:scale-150`}>{currentTier.icon}</span>
                                         </div>
                                         <div className="text-center">
-                                            <div className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Pangkat Saat Ini</div>
-                                            <div className={`text-2xl font-black ${currentTier.color}`}>{currentTier.name}</div>
-                                            <div className="text-sm font-bold text-zinc-700 dark:text-zinc-300 mt-2">
+                                            <div className="text-xs sm:text-sm font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Pangkat Saat Ini</div>
+                                            <div className={`text-3xl font-black ${currentTier.color}`}>{currentTier.name}</div>
+                                            <div className="text-sm sm:text-base font-bold text-zinc-700 dark:text-zinc-300 mt-1 sm:mt-2">
                                                 Cuan Sejati: {formatIDR(totalGlobalNetProfit)}
                                             </div>
                                         </div>
                                     </div>
 
                                     {currentTier.next && (
-                                        <div className="mb-8 bg-zinc-50 dark:bg-zinc-800/50 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-700">
-                                            <div className="flex justify-between text-xs font-bold mb-2">
+                                        <div className="mb-6 bg-zinc-50 dark:bg-zinc-800/50 p-4 sm:p-5 rounded-2xl border border-zinc-200 dark:border-zinc-700">
+                                            <div className="flex justify-between text-sm font-bold mb-2">
                                                 <span className="text-zinc-500">Progress ke {currentTier.nextName}</span>
                                                 <span className="text-zinc-900 dark:text-white">{Math.min(Math.round(((totalGlobalNetProfit - currentTier.min) / (currentTier.next - currentTier.min)) * 100), 100)}%</span>
                                             </div>
                                             <div className="w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2.5 mb-2 overflow-hidden">
                                                 <div className={`h-2.5 rounded-full ${currentTier.color.replace('text-', 'bg-')} transition-all duration-1000`} style={{ width: `${Math.min(((totalGlobalNetProfit - currentTier.min) / (currentTier.next - currentTier.min)) * 100, 100)}%` }}></div>
                                             </div>
-                                            <p className="text-[10px] text-center font-semibold text-zinc-500 mt-3">Butuh {formatIDR(currentTier.next - totalGlobalNetProfit)} lagi buat naik pangkat!</p>
+                                            <p className="text-xs text-center font-semibold text-zinc-500 mt-2">Butuh {formatIDR(currentTier.next - totalGlobalNetProfit)} lagi buat naik pangkat!</p>
                                         </div>
                                     )}
 
                                     <div>
-                                        <div className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">Daftar Kepangkatan</div>
-                                        <div className="space-y-2">
+                                        <div className="text-sm font-bold text-zinc-400 uppercase tracking-wider mb-2">Daftar Kepangkatan</div>
+                                        <div className="space-y-1.5 sm:space-y-2">
                                             {[
-                                                { name: 'Kuli Pasar', desc: 'Belum ngerasain cuan', color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800' },
-                                                { name: 'Pedagang Asongan', desc: 'Cuan s/d Rp 500k', color: 'text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30' },
-                                                { name: 'Juragan ARA', desc: 'Cuan s/d Rp 2 Juta', color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
-                                                { name: 'Bandar Cilik', desc: 'Cuan s/d Rp 10 Juta', color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30' },
-                                                { name: 'Anak Sultan', desc: 'Cuan > Rp 10 Juta', color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30' }
+                                                { name: 'Kuli Pasar', desc: 'Belum ngerasain cuan', color: 'text-zinc-500', bg: 'bg-zinc-100 dark:bg-zinc-800', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm-3-11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm8-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-2.88 5.76a.75.75 0 0 0-1.24 0A4.996 4.996 0 0 0 12 17a4.996 4.996 0 0 0-1.88-2.24.75.75 0 0 0-1.24.01" clipRule="evenodd" /></svg> },
+                                                { name: 'Pedagang Asongan', desc: 'Cuan s/d Rp 500k', color: 'text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M3 6a3 3 0 013-3h12a3 3 0 013 3v2.5a.5.5 0 01-.5.5h-17a.5.5 0 01-.5-.5V6zm-1.5 5a1.5 1.5 0 011.5-1.5h18a1.5 1.5 0 011.5 1.5v7a3 3 0 01-3 3H4.5a3 3 0 01-3-3v-7zm7.5 1a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 00-1-1h-4z" clipRule="evenodd" /></svg> },
+                                                { name: 'Juragan ARA', desc: 'Cuan s/d Rp 2 Juta', color: 'text-emerald-500', bg: 'bg-emerald-100 dark:bg-emerald-900/30', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M2.25 2.25a.75.75 0 0 0 0 1.5v16.5a.75.75 0 0 0 .75.75h16.5a.75.75 0 0 0 0-1.5H3.75V3.75a.75.75 0 0 0-.75-.75Zm5.213 11.287 4.5-4.5 2.53 2.53a.75.75 0 0 0 1.06 0l5-5a.75.75 0 1 0-1.06-1.06l-4.47 4.47-2.53-2.53a.75.75 0 0 0-1.06 0l-5 5a.75.75 0 0 0 1.06 1.06Z" clipRule="evenodd" /></svg> },
+                                                { name: 'Bandar Cilik', desc: 'Cuan s/d Rp 10 Juta', color: 'text-blue-500', bg: 'bg-blue-100 dark:bg-blue-900/30', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.36-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm3-1.5a1.5 1.5 0 00-1.5 1.5v.149c1-.1 2-.17 3-.205v-.149c0-.828-.672-1.5-1.5-1.5z" clipRule="evenodd" /><path d="M2.25 13.918c1.385.498 2.864.876 4.412 1.121A26.177 26.177 0 0012 17.25a26.177 26.177 0 005.338-.561 24.73 24.73 0 004.412-1.121v3.918c0 1.434-1.022 2.7-2.476 2.917A48.796 48.796 0 0112 22.5c-2.43 0-4.817-.178-7.152-.52-1.454-.218-2.476-1.483-2.476-2.917v-3.918z" /></svg> },
+                                                { name: 'Anak Sultan', desc: 'Cuan > Rp 10 Juta', color: 'text-purple-500', bg: 'bg-purple-100 dark:bg-purple-900/30', icon: <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clipRule="evenodd" /></svg> }
                                             ].map((tier, idx) => (
-                                                <div key={idx} className={`flex items-center justify-between p-3 rounded-xl border ${currentTier.name === tier.name ? 'border-gojek-500 bg-gojek-50 dark:bg-gojek-900/20' : 'border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900'}`}>
-                                                    <div className="flex items-center space-x-3">
-                                                        <div className={`w-8 h-8 rounded-full ${tier.bg} flex items-center justify-center`}>
-                                                            <div className={`w-4 h-4 rounded-full ${tier.color.replace('text-', 'bg-')}`}></div>
+                                                <div key={idx} className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl border ${currentTier.name === tier.name ? 'border-gojek-500 bg-gojek-50 dark:bg-gojek-900/20 shadow-sm shadow-gojek-500/10' : 'border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900/50'}`}>
+                                                    <div className="flex items-center space-x-3 sm:space-x-4">
+                                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full ${tier.bg} flex items-center justify-center ${tier.color}`}>
+                                                            {tier.icon}
                                                         </div>
                                                         <div>
-                                                            <div className={`text-sm font-bold ${currentTier.name === tier.name ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-700 dark:text-zinc-300'}`}>{tier.name}</div>
-                                                            <div className="text-[10px] text-zinc-500 font-medium">{tier.desc}</div>
+                                                            <div className={`text-base font-bold ${currentTier.name === tier.name ? 'text-gojek-600 dark:text-gojek-400' : 'text-zinc-700 dark:text-zinc-300'}`}>{tier.name}</div>
+                                                            <div className="text-xs text-zinc-500 font-medium leading-none mt-0.5">{tier.desc}</div>
                                                         </div>
                                                     </div>
                                                     {currentTier.name === tier.name && (
-                                                        <div className="text-[10px] font-black text-gojek-500 bg-gojek-100 dark:bg-gojek-900 px-2 py-1 rounded-md">YOU</div>
+                                                        <div className="text-[10px] font-black text-gojek-500 bg-gojek-100 dark:bg-gojek-900 px-2 py-1 rounded-md shrink-0">YOU</div>
                                                     )}
                                                 </div>
                                             ))}
