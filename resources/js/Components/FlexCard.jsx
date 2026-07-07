@@ -33,16 +33,10 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
             {/* Header */}
-            <div className="relative z-10 flex justify-between items-start mb-10">
-                <div>
-                    <div className="flex items-center space-x-2 mb-2">
-                        <img src="/pantau-cuan-logo.svg" alt="Logo" className="h-5 opacity-90" />
-                        <span className="font-bold text-xs tracking-widest uppercase opacity-70">Pantau Cuan</span>
-                    </div>
-                </div>
-                <div className={`px-3 py-1.5 rounded-full ${badgeBg} ${tierColor} flex items-center space-x-1.5`}>
-                    <span className="text-sm w-4 h-4 flex items-center justify-center">{icon}</span>
-                    <span className="text-[10px] font-black uppercase tracking-wider">{pangkat}</span>
+            <div className="relative z-10 flex justify-center items-center mb-10">
+                <div className="flex items-center space-x-2">
+                    <img src="/pantau-cuan-logo.svg" alt="Logo" className="h-6 opacity-90" />
+                    <span className="font-black text-sm tracking-[0.2em] uppercase opacity-80">Pantau Cuan</span>
                 </div>
             </div>
 
