@@ -42,20 +42,17 @@ Route::get('/proxy-logo', function (\Illuminate\Http\Request $request) {
     }
     
     // Fallback if e-ipo fails (e.g. 403, 404)
-    // We proxy a ui-avatars generation so the image doesn't break and avoids CORS
+    // We generate a simple SVG directly so it NEVER fails and requires no external HTTP request!
     parse_str(parse_url($url, PHP_URL_QUERY), $query);
-    $id = $query['id'] ?? 'IPO';
-    $fallbackUrl = "https://ui-avatars.com/api/?name=IP&background=random&color=fff";
+    $id = $query['id'] ?? 'IP';
+    $name = strtoupper(substr($id, 0, 2) ?: 'IP');
     
-    $fallbackResponse = \Illuminate\Support\Facades\Http::get($fallbackUrl);
-    if ($fallbackResponse->successful()) {
-        return response($fallbackResponse->body(), 200)
-            ->header('Content-Type', 'image/png')
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Cache-Control', 'public, max-age=86400');
-    }
-    
-    return abort(404);
+    $svg = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#18181b"/><text x="50" y="50" font-family="sans-serif" font-size="40" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="central">' . $name . '</text></svg>';
+
+    return response($svg, 200)
+        ->header('Content-Type', 'image/svg+xml')
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Cache-Control', 'public, max-age=86400');
 })->name('proxy.logo');
 
 Route::middleware('auth')->group(function () {
