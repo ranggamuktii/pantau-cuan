@@ -659,7 +659,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         <span>{isSyncing ? 'Lagi Update...' : 'Update Harga'}</span>
                                     </button>
 
-                                    {auth.user && totalPotensiProfit > 0 && (
+                                    {auth.user && ((summary?.totalFloatingProfit || 0) + (summary?.totalNetProfit || 0)) > 0 && (
                                         <button
                                             onClick={() => setIsFlexModalOpen(true)}
                                             className="whitespace-nowrap inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gradient-to-r from-emerald-500 to-teal-600 border border-transparent rounded-lg hover:from-emerald-600 hover:to-teal-700 shadow-sm focus:outline-none"
@@ -2162,7 +2162,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 <FlexCard 
                     ref={flexCardRef}
                     user={auth.user}
-                    totalProfit={totalPotensiProfit}
+                    totalProfit={(summary?.totalFloatingProfit || 0) + (summary?.totalNetProfit || 0)}
                     activeStocks={auth.user ? Object.values(groupedBySid).flatMap(sid => sid.map(trx => trx.stock.stock_code)) : []}
                     privacyMode={flexPrivacyMode}
                 />
