@@ -22,14 +22,15 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
     const borderClass = "border-zinc-800";
 
     return (
-        <div ref={ref} className={`w-[360px] h-[640px] relative overflow-hidden ${bgClass} ${textMain} rounded-3xl font-sans flex flex-col p-8`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+        <div ref={ref} className={`w-[400px] min-h-[640px] relative overflow-hidden bg-[#030303] text-white rounded-[2.5rem] font-sans flex flex-col p-10 border border-zinc-800/80 shadow-2xl`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
             
-            {/* Minimalist Grid Background */}
-            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-
-            {/* Subtle Gradient Lighting */}
-            <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none"></div>
-            <div className="absolute bottom-[-10%] right-[-10%] w-64 h-64 bg-teal-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+            {/* Premium Background Gradients & Lighting */}
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5"></div>
+            <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+            <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-500/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+            
+            {/* Minimalist Grid Pattern */}
+            <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
             {/* Header */}
             <div className="relative z-10 flex justify-between items-start mb-10">
@@ -46,16 +47,19 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             </div>
 
             {/* Main Stats */}
-            <div className="relative z-10 flex-1 flex flex-col justify-center">
-                <p className={`text-xs font-semibold ${textMuted} mb-3 uppercase tracking-widest`}>Portofolio Tracker</p>
+            <div className="relative z-10 flex-1 flex flex-col justify-center py-6">
+                <p className={`text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-[0.2em] flex items-center`}>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                    Portofolio Tracker
+                </p>
                 
                 <div className="flex flex-col items-start">
-                    <span className="text-3xl font-black tracking-tight leading-none mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+                    <span className="text-4xl font-black tracking-tighter leading-none mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400 drop-shadow-sm">
                         Cuan Maksimal!
                     </span>
                     
-                    <div className="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-bold mt-2">
-                        <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    <div className="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold mt-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
+                        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
                         All Time High
                     </div>
                 </div>
@@ -64,22 +68,31 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             {/* Stocks & Footer */}
             <div className="relative z-10 mt-auto">
                 {activeStocks && activeStocks.length > 0 && (
-                    <div className="mb-8">
-                        <p className={`text-[10px] font-bold ${textMuted} mb-3 uppercase tracking-widest`}>Koleksi IPO</p>
-                        <div className="grid grid-cols-2 gap-2">
+                    <div className="mb-10">
+                        <div className="flex items-center mb-4 text-zinc-400">
+                            <svg className="w-4 h-4 mr-2 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            <p className="text-xs font-bold uppercase tracking-[0.15em]">Koleksi IPO</p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
                             {activeStocks.slice(0, 8).map((stock, i) => {
                                 const isProfit = stock.percentage > 0;
                                 const isLoss = stock.percentage < 0;
                                 return (
-                                    <div key={i} className={`flex items-center justify-between px-3 py-2 bg-zinc-900/80 rounded-xl border border-zinc-800/80 backdrop-blur-sm`}>
-                                        <span className={`text-sm font-black ${textMain}`}>{stock.code}</span>
-                                        <div className={`flex items-center space-x-1 font-black text-sm ${isProfit ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-zinc-500'}`}>
-                                            {isProfit && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>}
-                                            {isLoss && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>}
+                                    <div key={i} className="flex flex-col justify-center px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-colors relative overflow-hidden">
+                                        <div className="flex items-center justify-between mb-1 relative z-10">
+                                            <span className="text-base font-black text-white">{stock.code}</span>
+                                        </div>
+                                        <div className={`flex items-center space-x-1 font-black text-sm relative z-10 ${isProfit ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-zinc-400'}`}>
+                                            {isProfit && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+                                            {isLoss && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>}
+                                            {!isProfit && !isLoss && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 12h14" /></svg>}
                                             <span>
                                                 {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
                                             </span>
                                         </div>
+                                        {/* Subtle background glow for profit/loss */}
+                                        {isProfit && <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-500/10 blur-[10px] rounded-full translate-x-4 -translate-y-4"></div>}
+                                        {isLoss && <div className="absolute top-0 right-0 w-12 h-12 bg-rose-500/10 blur-[10px] rounded-full translate-x-4 -translate-y-4"></div>}
                                     </div>
                                 );
                             })}
@@ -87,16 +100,16 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                     </div>
                 )}
                 
-                <div className={`flex items-center justify-between pt-5 border-t ${borderClass}`}>
-                    <div className="flex items-center space-x-3">
+                <div className={`flex items-center justify-between pt-6 border-t border-white/10`}>
+                    <div className="flex items-center space-x-4">
                         <img 
                             src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'I')}&background=18181b&color=fff&size=128&bold=true`} 
                             alt="Avatar" 
-                            className="w-9 h-9 rounded-full border-2 border-zinc-700/50 shadow-sm object-cover" 
+                            className="w-10 h-10 rounded-full border-2 border-white/20 shadow-lg object-cover" 
                         />
                         <div>
-                            <p className="text-sm font-bold leading-none">{user?.name || 'Investor'}</p>
-                            <p className={`text-[10px] ${textMuted} mt-1`}>pantaucuan.site</p>
+                            <p className="text-base font-black leading-none text-white tracking-wide">{user?.name || 'Investor'}</p>
+                            <p className="text-[11px] font-semibold text-zinc-400 mt-1.5 uppercase tracking-widest">pantaucuan.site</p>
                         </div>
                     </div>
                 </div>
