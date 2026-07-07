@@ -233,7 +233,7 @@ class DashboardController extends Controller
                         'ticker' => $ticker,
                         'title' => 'Penjatahan Hari Ini!',
                         'message' => "Hari ini penjatahan saham {$ticker}! Cek e-IPO kamu buat liat dapet berapa lot.",
-                        'icon' => '🗓️',
+                        'icon' => 'calendar',
                         'color' => 'emerald',
                     ];
                 }
@@ -250,9 +250,9 @@ class DashboardController extends Controller
                         'ticker' => $ticker,
                         'title' => 'Distribusi Saham Hari Ini!',
                         'message' => $isPersonal
-                            ? "Selamat! 🎉 Saham {$ticker} lu sudah didistribusikan ke RDN. Cek saldo sekuritas lu sekarang!"
+                            ? "Selamat! Saham {$ticker} lu sudah didistribusikan ke RDN. Cek saldo sekuritas lu sekarang!"
                             : "Distribusi saham {$ticker} hari ini! Saham masuk ke rekening investor.",
-                        'icon' => '📦',
+                        'icon' => 'box',
                         'color' => 'blue',
                     ];
                 }
@@ -265,7 +265,7 @@ class DashboardController extends Controller
                         'ticker' => $ticker,
                         'title' => 'Distribusi Besok!',
                         'message' => "Distribusi saham {$ticker} besok! Pastikan kamu sudah siap.",
-                        'icon' => '📦',
+                        'icon' => 'box',
                         'color' => 'blue',
                     ];
                 }
@@ -280,11 +280,11 @@ class DashboardController extends Controller
                         'id' => 'listing_' . $ticker,
                         'type' => 'listing',
                         'ticker' => $ticker,
-                        'title' => $isPersonal ? "🎉 {$ticker} Listing Hari Ini!" : "{$ticker} Listing Hari Ini!",
+                        'title' => $isPersonal ? "{$ticker} Listing Hari Ini!" : "{$ticker} Listing Hari Ini!",
                         'message' => $isPersonal
-                            ? "Selamat! Saham {$ticker} lu listing hari ini! 🚀 Pantau pergerakan harganya dan siap-siap cuan!"
+                            ? "Selamat! Saham {$ticker} lu listing hari ini! Pantau pergerakan harganya dan siap-siap cuan!"
                             : "Saham {$ticker} listing di BEI hari ini! Pantau pergerakan ARA/ARB-nya.",
-                        'icon' => '🚀',
+                        'icon' => 'rocket',
                         'color' => 'gojek',
                     ];
                 }
@@ -296,8 +296,8 @@ class DashboardController extends Controller
                         'type' => 'listing',
                         'ticker' => $ticker,
                         'title' => "{$ticker} Listing Besok!",
-                        'message' => "Saham {$ticker} listing besok! 🔥 Siap-siap pantau harganya ya.",
-                        'icon' => '🔔',
+                        'message' => "Saham {$ticker} listing besok! Siap-siap pantau harganya ya.",
+                        'icon' => 'bell',
                         'color' => 'amber',
                     ];
                 }
@@ -318,7 +318,7 @@ class DashboardController extends Controller
                         'ticker' => $ipo['ticker'],
                         'title' => 'Penawaran Berakhir Hari Ini!',
                         'message' => "Masa penawaran {$ipo['ticker']} berakhir hari ini! Buruan pesan kalau belum.",
-                        'icon' => '⏰',
+                        'icon' => 'clock',
                         'color' => 'rose',
                     ];
                 }
@@ -330,7 +330,7 @@ class DashboardController extends Controller
                         'ticker' => $ipo['ticker'],
                         'title' => 'Penawaran Berakhir Besok!',
                         'message' => "Masa penawaran {$ipo['ticker']} berakhir besok! Jangan sampai kelewatan ya.",
-                        'icon' => '⏰',
+                        'icon' => 'clock',
                         'color' => 'amber',
                     ];
                 }

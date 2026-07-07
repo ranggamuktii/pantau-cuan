@@ -2008,7 +2008,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                 <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
                                     <div className="text-center mb-6">
                                         <div className="w-20 h-20 mx-auto bg-gojek-100 dark:bg-gojek-900/30 rounded-full flex items-center justify-center mb-4 shadow-xl">
-                                            <span className="text-4xl">🔐</span>
+                                            <svg className="w-10 h-10 text-gojek-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                         </div>
                                         <Dialog.Title as="h3" className="text-2xl font-black leading-6 text-zinc-900 dark:text-white mb-2">
                                             Login Dulu Bosku!
@@ -2049,7 +2049,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             <svg className="w-10 h-10 sm:w-12 sm:h-12 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
                                         </div>
                                         <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white mb-3">
-                                            INFO PENTING HARI INI! 🚀
+                                            INFO PENTING HARI INI!
                                         </h2>
                                         <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 mb-8 max-w-sm">
                                             Jangan sampe kelewatan momen penting portofolio IPO lu. Ada update jadwal dari BEI yang perlu lu pantau.
@@ -2064,7 +2064,14 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                     notif.color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' :
                                                     'bg-gojek-50 dark:bg-gojek-900/20 border-gojek-200 dark:border-gojek-800'
                                                 }`}>
-                                                    <div className="text-3xl shrink-0">{notif.icon}</div>
+                                                    <div className="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-800 shadow-sm border border-zinc-100 dark:border-zinc-700">
+                                                        {notif.icon === 'calendar' && <svg className="w-7 h-7 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>}
+                                                        {notif.icon === 'box' && <svg className="w-7 h-7 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>}
+                                                        {notif.icon === 'rocket' && <svg className="w-7 h-7 text-gojek-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>}
+                                                        {notif.icon === 'bell' && <svg className="w-7 h-7 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>}
+                                                        {notif.icon === 'clock' && <svg className="w-7 h-7 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                                                        {!['calendar', 'box', 'rocket', 'bell', 'clock'].includes(notif.icon) && notif.icon}
+                                                    </div>
                                                     <div>
                                                         <div className="flex items-center space-x-2 mb-1">
                                                             <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-white dark:bg-zinc-800 shadow-sm">{notif.ticker}</span>
@@ -2081,8 +2088,9 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             )}
                                         </div>
 
-                                        <button onClick={dismissAnnouncement} className="w-full mt-8 px-6 py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-xl text-sm sm:text-base">
-                                            Siap, Mantap! 👍
+                                        <button onClick={dismissAnnouncement} className="w-full mt-8 px-6 py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-xl text-sm sm:text-base flex items-center justify-center">
+                                            Siap, Mantap!
+                                            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
                                         </button>
                                     </div>
                                 </Dialog.Panel>
