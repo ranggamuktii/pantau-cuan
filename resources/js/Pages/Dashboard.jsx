@@ -199,6 +199,16 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         return `https://ui-avatars.com/api/?name=${brokerName.charAt(0)}&background=random&color=fff&size=128&font-size=0.4&bold=true`;
     };
 
+    const getStockLogo = (ticker) => {
+        if (!ticker) return null;
+        const allIpos = [...(activeIpos || []), ...(ipoCalendar || [])];
+        const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
+        if (ipo && typeof ipo.id === 'number') {
+            return `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
+        }
+        return `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`;
+    };
+
     const submitPriceUpdate = null; // Removed - price is display only now
 
     const { data: sidData, setData: setSidData, post: postSid, processing: processingSid, reset: resetSid } = useForm({
@@ -468,7 +478,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                                 'bg-gojek-100 dark:bg-gojek-900/30'
                                                                             }`}>{notif.icon === 'calendar' ? <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> : notif.icon === 'box' ? <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> : notif.icon === 'rocket' ? <svg className="w-5 h-5 text-gojek-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> : notif.icon === 'bell' ? <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg> : notif.icon === 'clock' ? <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> : notif.icon}</div>
                                                                             <div className="flex-1 min-w-0">
-                                                                                <div className="flex items-center space-x-2 mb-0.5">
+                                                                                <div className="flex items-center space-x-1.5 mb-1">
+                                                                                    <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-4 h-4 rounded-full object-contain bg-white shadow-sm border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${notif.ticker?.substring(0, 2)}&background=random&color=fff`; }} />
                                                                                     <span className="text-xs font-black text-gojek-600 dark:text-gojek-400 uppercase tracking-wider">{notif.ticker}</span>
                                                                                 </div>
                                                                                 <p className="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-100 leading-tight">{notif.title}</p>
@@ -2076,7 +2087,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                         {!['calendar', 'box', 'rocket', 'bell', 'clock'].includes(notif.icon) && notif.icon}
                                                     </div>
                                                     <div>
-                                                        <div className="flex items-center space-x-2 mb-1">
+                                                        <div className="flex items-center space-x-1.5 mb-1">
+                                                            <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-5 h-5 rounded-full object-contain bg-white shadow-sm border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${notif.ticker?.substring(0, 2)}&background=random&color=fff`; }} />
                                                             <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-white dark:bg-zinc-800 shadow-sm">{notif.ticker}</span>
                                                         </div>
                                                         <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 leading-tight">{notif.title}</h4>
