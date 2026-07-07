@@ -161,7 +161,11 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         if (flexCardRef.current === null) return;
         setIsGeneratingFlex(true);
         try {
-            const dataUrl = await toPng(flexCardRef.current, { cacheBust: true, quality: 0.95 });
+            const dataUrl = await toPng(flexCardRef.current, { 
+                cacheBust: true, 
+                quality: 0.95,
+                fontEmbedCSS: '' // bypass cross-origin fonts issue
+            });
             setFlexImageUrl(dataUrl);
         } catch (err) {
             console.error('Oops, something went wrong!', err);
