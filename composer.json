@@ -12,7 +12,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.28",
         "laravel/tinker": "^2.10.1",
-        "laravel-notification-channels/webpush": "^8.1",
+        "laravel-notification-channels/webpush": "^11.0",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
