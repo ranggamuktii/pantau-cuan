@@ -32,7 +32,7 @@ class SendDailyIpoPush extends Command
     {
         $this->info('Checking IPO schedules for push notifications...');
 
-        $activeIposPath = storage_path('app/active_ipos.json');
+        $activeIposPath = base_path('active_ipos.json');
         if (!file_exists($activeIposPath)) {
             $this->error('active_ipos.json not found. Run sync first.');
             return;
