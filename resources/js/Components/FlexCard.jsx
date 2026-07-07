@@ -29,7 +29,7 @@ const FlexCard = forwardRef(({ user, totalProfit, activeStocks, privacyMode = fa
             {/* Header */}
             <div className="relative z-10">
                 <div className="flex items-center space-x-3 mb-8">
-                    <img src="/logo.png" alt="Logo" className="w-8 h-8 rounded-full" onError={(e) => { e.target.style.display = 'none'; }} />
+                    <img src="/pantau-cuan-logo.svg" alt="Logo" className="h-6 opacity-70 mb-1" />
                     <span className="font-extrabold text-sm tracking-widest uppercase text-zinc-400">Pantau Cuan</span>
                 </div>
                 
