@@ -1336,84 +1336,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 </Dialog>
             </Transition>
 
-            {/* Edit Price Modal */}
-            <Transition appear show={isPriceModalOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={() => setIsPriceModalOpen(false)}>
-                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-                        <div className="fixed inset-0 bg-zinc-900/60 backdrop-blur-md" />
-                    </Transition.Child>
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                                <Dialog.Panel className="w-full max-w-xs transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-950 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
-                                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gojek-50 dark:bg-gojek-900/30 mb-4">
-                                        <svg className="h-8 w-8 text-gojek-600 dark:text-gojek-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                    </div>
-                                    <Dialog.Title as="h3" className="text-xl font-extrabold leading-6 text-zinc-900 dark:text-white text-center mb-6">Update Harga</Dialog.Title>
-                                    <form onSubmit={submitPriceUpdate} className="space-y-6">
-                                        {(() => {
-                                            const getAraArbStatus = (base, current) => {
-                                                if (!base || !current || base === current) return null;
-                                                let p = base;
-                                                for (let i = 1; i <= 10; i++) {
-                                                    let pct = p > 5000 ? 0.20 : (p > 200 ? 0.25 : 0.35);
-                                                    p = Math.round(p * (1 + pct));
-                                                    if (p === current) return { type: 'ARA', count: i, percent: ((current - base) / base * 100).toFixed(1) };
-                                                }
-                                                p = base;
-                                                for (let i = 1; i <= 10; i++) {
-                                                    let pct = p > 5000 ? 0.20 : (p > 200 ? 0.25 : 0.35);
-                                                    p = Math.round(p * (1 - pct));
-                                                    if (p === current) return { type: 'ARB', count: i, percent: ((current - base) / base * 100).toFixed(1) };
-                                                }
-                                                return null;
-                                            };
-                                            const araArbStatus = getAraArbStatus(parseInt(priceData.base_price), parseInt(priceData.price));
-                                            return (
-                                                <div>
-                                                    <div className="relative rounded-2xl shadow-sm">
-                                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                                                            <span className="text-zinc-500 dark:text-zinc-400 sm:text-lg font-bold">Rp</span>
-                                                        </div>
-                                                        <input type="number" min="0" value={priceData.price} onChange={e => setPriceData({ ...priceData, price: e.target.value })} className="block w-full rounded-2xl border-zinc-200 dark:border-zinc-700 pl-14 pr-4 py-4 text-2xl font-black text-center focus:border-gojek-500 focus:ring-gojek-500 bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-inner transition-colors" placeholder="0" />
-                                                    </div>
-                                                    {araArbStatus && (
-                                                        <div className={`mt-3 text-center text-xs font-black uppercase tracking-wider ${araArbStatus.type === 'ARA' ? 'text-gojek-600 dark:text-gojek-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                                                            🔥 Mentok {araArbStatus.type} {araArbStatus.count}x ({araArbStatus.percent > 0 ? '+' : ''}{araArbStatus.percent}%)
-                                                        </div>
-                                                    )}
-                                                    <div className="flex justify-center space-x-3 mt-4">
-                                                        <button type="button" onClick={() => {
-                                                            const prevPrice = parseInt(priceData.price || priceData.base_price || 0);
-                                                            if (!prevPrice) return;
-                                                            let percentage = prevPrice > 5000 ? 0.20 : (prevPrice > 200 ? 0.25 : 0.35);
-                                                            setPriceData({ ...priceData, price: Math.round(prevPrice * (1 - percentage)) });
-                                                        }} className="px-4 py-2 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-xs font-bold rounded-xl hover:bg-rose-200 dark:hover:bg-rose-900/50 transition-colors shadow-sm">
-                                                            - ARB
-                                                        </button>
-                                                        <button type="button" onClick={() => {
-                                                            const prevPrice = parseInt(priceData.price || priceData.base_price || 0);
-                                                            if (!prevPrice) return;
-                                                            let percentage = prevPrice > 5000 ? 0.20 : (prevPrice > 200 ? 0.25 : 0.35);
-                                                            setPriceData({ ...priceData, price: Math.round(prevPrice * (1 + percentage)) });
-                                                        }} className="px-4 py-2 bg-gojek-100 dark:bg-gojek-900/30 text-gojek-700 dark:text-gojek-400 text-xs font-bold rounded-xl hover:bg-gojek-200 dark:hover:bg-gojek-900/50 transition-colors shadow-sm">
-                                                            + ARA
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })()}
-                                        <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
-                                            <button type="button" onClick={() => setIsPriceModalOpen(false)} className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors">Batal</button>
-                                            <button type="submit" className="flex-1 px-4 py-3 rounded-2xl text-sm font-bold text-white bg-gojek-600 hover:bg-gojek-700 transition-colors shadow-lg shadow-gojek-200 dark:shadow-gojek-900">Simpan</button>
-                                        </div>
-                                    </form>
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
+
 
             {/* Delete SID Modal */}
             <Transition appear show={isDeleteSidModalOpen} as={Fragment}>
@@ -1582,68 +1505,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 </Dialog>
             </Transition>
 
-            {/* Smart Averaging Calculator Modal */}
-            <Transition appear show={isAvgCalcOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-50" onClose={() => setIsAvgCalcOpen(false)}>
-                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-                        <div className="fixed inset-0 bg-stone-900/80 backdrop-blur-sm" />
-                    </Transition.Child>
-                    <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
-                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl bg-white dark:bg-zinc-900 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-100 dark:border-zinc-800">
-                                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gojek-50 dark:bg-gojek-900/30 mb-4">
-                                        <svg className="h-8 w-8 text-gojek-600 dark:text-gojek-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
-                                    </div>
-                                    <Dialog.Title as="h3" className="text-2xl font-black leading-6 text-zinc-900 dark:text-white mb-2 text-center">Kalkulator Rata-rata</Dialog.Title>
-                                    <p className="text-center text-sm text-zinc-500 dark:text-zinc-400 mb-6">Biar nggak pusing, hitung average harga buat saham {avgCalcData.trx?.stock?.stock_code} kamu.</p>
 
-                                    <div className="space-y-4">
-                                        <div className="bg-stone-50 dark:bg-stone-950 p-4 rounded-2xl flex justify-between items-center">
-                                            <div>
-                                                <p className="text-xs text-stone-500 dark:text-stone-400 font-bold uppercase">Average Saat Ini</p>
-                                                <p className="text-lg font-black text-stone-800 dark:text-white">{formatIDR(avgCalcData.trx?.buy_price || 0)}</p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="text-xs text-stone-500 dark:text-stone-400 font-bold uppercase">Total Lot Saat Ini</p>
-                                                <p className="text-lg font-black text-stone-800 dark:text-white">{avgCalcData.trx?.lots || 0}</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-2 uppercase">Mau Tambah Berapa Lot?</label>
-                                                <input type="number" min="1" value={avgCalcData.additionalLots} onChange={e => setAvgCalcData({ ...avgCalcData, additionalLots: e.target.value })} className="w-full rounded-xl border-stone-200 dark:border-stone-800 focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-stone-950 font-bold text-stone-900 dark:text-white px-4 py-3 tabular-nums" placeholder="0" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-2 uppercase">Target Harga Beli</label>
-                                                <input type="number" min="1" value={avgCalcData.newPrice} onChange={e => setAvgCalcData({ ...avgCalcData, newPrice: e.target.value })} className="w-full rounded-xl border-stone-200 dark:border-stone-800 focus:border-indigo-500 focus:ring-indigo-500 bg-white dark:bg-stone-950 font-bold text-stone-900 dark:text-white px-4 py-3 tabular-nums" placeholder="Rp" />
-                                            </div>
-                                        </div>
-
-                                        {calculateAvgDown() && (
-                                            <div className="mt-6 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 p-5 rounded-2xl">
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className="text-sm font-bold text-emerald-800 dark:text-emerald-400">Average Baru Kamu</span>
-                                                    <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">{formatIDR(calculateAvgDown().newAvgPrice)}</span>
-                                                </div>
-                                                <div className="flex justify-between items-center">
-                                                    <span className="text-xs font-bold text-emerald-600/70 dark:text-emerald-500 uppercase">Modal Tambahan</span>
-                                                    <span className="text-sm font-bold text-emerald-700 dark:text-emerald-500 tabular-nums">{formatIDR(calculateAvgDown().totalNewCapital)}</span>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        <div className="mt-8">
-                                            <button type="button" onClick={() => setIsAvgCalcOpen(false)} className="w-full px-4 py-3 rounded-xl text-sm font-bold text-white bg-stone-900 hover:bg-stone-800 dark:bg-white dark:text-stone-900 dark:hover:bg-stone-200 transition-colors">Tutup Kalkulator</button>
-                                        </div>
-                                    </div>
-                                </Dialog.Panel>
-                            </Transition.Child>
-                        </div>
-                    </div>
-                </Dialog>
-            </Transition>
 
             {/* Custom CSS for blob animation */}
             <style dangerouslySetInnerHTML={{
