@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "canvas-confetti": "^1.9.2",
+        "html-to-image": "^1.11.11",
         "react-google-recaptcha": "^3.1.0",
         "recharts": "^3.9.1"
     }

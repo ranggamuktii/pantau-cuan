@@ -1,10 +1,13 @@
 import { Head, useForm, router, usePage, Link } from '@inertiajs/react';
 import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
-import { useState, Fragment, useEffect } from 'react';
+import { useState, Fragment, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Dialog, Transition, Combobox, Listbox } from '@headlessui/react';
 import FeedbackWidget from '@/Components/FeedbackWidget';
 import confetti from 'canvas-confetti';
+import { toPng } from 'html-to-image';
+import FlexCard from '@/Components/FlexCard';
+
 const useCountdown = (targetDateStr) => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true });
 
@@ -138,7 +141,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         localStorage.setItem('announcementDismissed', today);
     };
 
-    // Helper: require login for actions
     const requireLogin = (callback) => {
         if (!auth.user) {
             setIsLoginPromptOpen(true);
@@ -146,6 +148,45 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         }
         callback();
     };
+
+    // Flexing States
+    const flexCardRef = useRef(null);
+    const [isFlexModalOpen, setIsFlexModalOpen] = useState(false);
+    const [flexPrivacyMode, setFlexPrivacyMode] = useState(false);
+    const [isGeneratingFlex, setIsGeneratingFlex] = useState(false);
+    const [flexImageUrl, setFlexImageUrl] = useState(null);
+
+    const generateFlexImage = async () => {
+        if (flexCardRef.current === null) return;
+        setIsGeneratingFlex(true);
+        try {
+            const dataUrl = await toPng(flexCardRef.current, { cacheBust: true, quality: 0.95 });
+            setFlexImageUrl(dataUrl);
+        } catch (err) {
+            console.error('Oops, something went wrong!', err);
+            setToast({ show: true, message: 'Gagal membuat gambar.', type: 'error' });
+        } finally {
+            setIsGeneratingFlex(false);
+        }
+    };
+
+    const handleDownloadFlex = () => {
+        if (!flexImageUrl) return;
+        const link = document.createElement('a');
+        link.download = `cuan-pamer-${Date.now()}.png`;
+        link.href = flexImageUrl;
+        link.click();
+    };
+
+    useEffect(() => {
+        if (isFlexModalOpen) {
+            setFlexImageUrl(null);
+            // small delay to let the DOM render before capturing
+            setTimeout(() => {
+                generateFlexImage();
+            }, 300);
+        }
+    }, [isFlexModalOpen, flexPrivacyMode]);
 
     useEffect(() => {
         if (flash.success && flash.success !== toast.message) {
@@ -617,6 +658,16 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         )}
                                         <span>{isSyncing ? 'Lagi Update...' : 'Update Harga'}</span>
                                     </button>
+
+                                    {auth.user && totalPotensiProfit > 0 && (
+                                        <button
+                                            onClick={() => setIsFlexModalOpen(true)}
+                                            className="whitespace-nowrap inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gradient-to-r from-emerald-500 to-teal-600 border border-transparent rounded-lg hover:from-emerald-600 hover:to-teal-700 shadow-sm focus:outline-none"
+                                        >
+                                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                            Pamer Cuan
+                                        </button>
+                                    )}
                                     {auth.user ? (
                                         <button
                                             onClick={() => requireLogin(() => setIsSidModalOpen(true))}
@@ -2106,7 +2157,71 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 </Dialog>
             </Transition>
 
-            
+            </Transition>
+
+            {/* Hidden component strictly for generating image */}
+            <div className="fixed top-0 left-[-9999px] z-[-1] pointer-events-none opacity-0">
+                <FlexCard 
+                    ref={flexCardRef}
+                    user={auth.user}
+                    totalProfit={totalPotensiProfit}
+                    activeStocks={auth.user ? Object.values(groupedBySid).flatMap(sid => sid.map(trx => trx.stock.stock_code)) : []}
+                    privacyMode={flexPrivacyMode}
+                />
+            </div>
+
+            {/* Flexing Preview Modal */}
+            <Modal show={isFlexModalOpen} onClose={() => setIsFlexModalOpen(false)} maxWidth="sm">
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Flexing Cuan 📸</h2>
+                        <button onClick={() => setIsFlexModalOpen(false)} className="text-zinc-400 hover:text-zinc-600 transition">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+
+                    <div className="mb-4 p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+                        <label className="flex items-center justify-between cursor-pointer">
+                            <div>
+                                <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">Mode Privasi</p>
+                                <p className="text-xs text-zinc-500">Sembunyikan nominal Rupiah</p>
+                            </div>
+                            <div className="relative">
+                                <input type="checkbox" className="sr-only" checked={flexPrivacyMode} onChange={(e) => setFlexPrivacyMode(e.target.checked)} />
+                                <div className={`block w-10 h-6 rounded-full transition-colors ${flexPrivacyMode ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-700'}`}></div>
+                                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${flexPrivacyMode ? 'transform translate-x-4' : ''}`}></div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div className="w-full flex justify-center mb-6 bg-zinc-100 dark:bg-zinc-900 rounded-xl p-4 overflow-hidden border border-zinc-200 dark:border-zinc-800">
+                        {isGeneratingFlex ? (
+                            <div className="h-[400px] w-full flex flex-col items-center justify-center text-zinc-400">
+                                <svg className="animate-spin h-8 w-8 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span className="text-sm font-bold">Mencetak Kartu Flex...</span>
+                            </div>
+                        ) : flexImageUrl ? (
+                            <img src={flexImageUrl} alt="Cuan Pamer" className="w-[80%] rounded-2xl shadow-xl border border-zinc-200/20" />
+                        ) : (
+                            <div className="h-[400px] w-full flex items-center justify-center text-red-500">Gagal generate</div>
+                        )}
+                    </div>
+
+                    <button
+                        onClick={handleDownloadFlex}
+                        disabled={isGeneratingFlex || !flexImageUrl}
+                        className={`w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center transition-all ${
+                            isGeneratingFlex || !flexImageUrl 
+                                ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed' 
+                                : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25 active:scale-95'
+                        }`}
+                    >
+                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        Download buat IG Story
+                    </button>
+                </div>
+            </Modal>
+
             <FeedbackWidget />
         </div>
     );
