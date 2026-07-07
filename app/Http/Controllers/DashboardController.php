@@ -143,6 +143,9 @@ class DashboardController extends Controller
             }
         }
 
+        // Generate Smart Notifications based on today's date and IPO events
+        $notifications = $this->generateSmartNotifications($ipoDetails, $activeIpos, $ipoCalendar, $accountSids);
+
         $secureAccountSids = $accountSids->map(function ($sid) {
             return [
                 'id' => $sid->id,
@@ -157,6 +160,7 @@ class DashboardController extends Controller
                         'net_profit' => $trx->net_profit,
                         'status' => $trx->status,
                         'stock' => $trx->stock ? [
+                            'id' => $trx->stock->id,
                             'stock_code' => $trx->stock->stock_code,
                             'current_price' => $trx->stock->current_price,
                             'ipo_price' => $trx->stock->ipo_price,
@@ -174,6 +178,165 @@ class DashboardController extends Controller
             'activeIpos' => $activeIpos,
             'ipoCalendar' => $ipoCalendar,
             'ipoDetails' => $ipoDetails,
+            'notifications' => $notifications,
         ]);
+    }
+
+    /**
+     * Generate smart notifications based on IPO events and calendar.
+     */
+    private function generateSmartNotifications($ipoDetails, $activeIpos, $ipoCalendar, $accountSids)
+    {
+        $notifications = [];
+        $today = now()->format('Y-m-d');
+
+        $months = [
+            'Jan' => '01', 'Feb' => '02', 'Mar' => '03', 'Apr' => '04',
+            'May' => '05', 'Jun' => '06', 'Jul' => '07', 'Aug' => '08',
+            'Sep' => '09', 'Oct' => '10', 'Nov' => '11', 'Dec' => '12'
+        ];
+
+        $parseDate = function($dateStr) use ($months) {
+            if (!$dateStr) return null;
+            $parts = explode(' ', trim($dateStr));
+            if (count($parts) >= 3) {
+                $month = $months[$parts[1]] ?? null;
+                if ($month) {
+                    return $parts[2] . '-' . $month . '-' . str_pad($parts[0], 2, '0', STR_PAD_LEFT);
+                }
+            }
+            return null;
+        };
+
+        // Collect user's stock codes for personalized messages
+        $userStockCodes = [];
+        foreach ($accountSids as $sid) {
+            foreach ($sid->transactions as $trx) {
+                if ($trx->stock && $trx->status === 'open') {
+                    $userStockCodes[] = $trx->stock->stock_code;
+                }
+            }
+        }
+        $userStockCodes = array_unique($userStockCodes);
+
+        // Check IPO details for events
+        foreach ($ipoDetails as $ticker => $details) {
+            $schedule = $details['schedule'] ?? [];
+
+            // Allotment check
+            if (!empty($schedule['allotment'])) {
+                $allotmentDate = $parseDate($schedule['allotment']);
+                if ($allotmentDate === $today) {
+                    $notifications[] = [
+                        'id' => 'allotment_' . $ticker,
+                        'type' => 'allotment',
+                        'ticker' => $ticker,
+                        'title' => 'Penjatahan Hari Ini!',
+                        'message' => "Hari ini penjatahan saham {$ticker}! Cek e-IPO kamu buat liat dapet berapa lot.",
+                        'icon' => '🗓️',
+                        'color' => 'emerald',
+                    ];
+                }
+            }
+
+            // Distribution check
+            if (!empty($schedule['distribution'])) {
+                $distDate = $parseDate($schedule['distribution']);
+                if ($distDate === $today) {
+                    $isPersonal = in_array($ticker, $userStockCodes);
+                    $notifications[] = [
+                        'id' => 'distribution_' . $ticker,
+                        'type' => 'distribution',
+                        'ticker' => $ticker,
+                        'title' => 'Distribusi Saham Hari Ini!',
+                        'message' => $isPersonal
+                            ? "Selamat! 🎉 Saham {$ticker} lu sudah didistribusikan ke RDN. Cek saldo sekuritas lu sekarang!"
+                            : "Distribusi saham {$ticker} hari ini! Saham masuk ke rekening investor.",
+                        'icon' => '📦',
+                        'color' => 'blue',
+                    ];
+                }
+                // Tomorrow check
+                $tomorrow = now()->addDay()->format('Y-m-d');
+                if ($distDate === $tomorrow) {
+                    $notifications[] = [
+                        'id' => 'dist_tomorrow_' . $ticker,
+                        'type' => 'distribution',
+                        'ticker' => $ticker,
+                        'title' => 'Distribusi Besok!',
+                        'message' => "Distribusi saham {$ticker} besok! Pastikan kamu sudah siap.",
+                        'icon' => '📦',
+                        'color' => 'blue',
+                    ];
+                }
+            }
+
+            // Listing check
+            if (!empty($schedule['listing_date'])) {
+                $listingDate = $parseDate($schedule['listing_date']);
+                if ($listingDate === $today) {
+                    $isPersonal = in_array($ticker, $userStockCodes);
+                    $notifications[] = [
+                        'id' => 'listing_' . $ticker,
+                        'type' => 'listing',
+                        'ticker' => $ticker,
+                        'title' => $isPersonal ? "🎉 {$ticker} Listing Hari Ini!" : "{$ticker} Listing Hari Ini!",
+                        'message' => $isPersonal
+                            ? "Selamat! Saham {$ticker} lu listing hari ini! 🚀 Pantau pergerakan harganya dan siap-siap cuan!"
+                            : "Saham {$ticker} listing di BEI hari ini! Pantau pergerakan ARA/ARB-nya.",
+                        'icon' => '🚀',
+                        'color' => 'gojek',
+                    ];
+                }
+                // Upcoming listing (tomorrow)
+                $tomorrow = now()->addDay()->format('Y-m-d');
+                if ($listingDate === $tomorrow) {
+                    $notifications[] = [
+                        'id' => 'listing_tomorrow_' . $ticker,
+                        'type' => 'listing',
+                        'ticker' => $ticker,
+                        'title' => "{$ticker} Listing Besok!",
+                        'message' => "Saham {$ticker} listing besok! 🔥 Siap-siap pantau harganya ya.",
+                        'icon' => '🔔',
+                        'color' => 'amber',
+                    ];
+                }
+            }
+        }
+
+        // Check active offerings ending today/tomorrow
+        foreach ($activeIpos as $ipo) {
+            if (($ipo['status'] ?? '') !== 'Offering') continue;
+            $offeringPeriod = $ipo['offering_period'] ?? '';
+            $parts = explode(' - ', $offeringPeriod);
+            if (count($parts) === 2) {
+                $endDate = $parseDate(trim($parts[1]));
+                if ($endDate === $today) {
+                    $notifications[] = [
+                        'id' => 'offering_end_' . $ipo['ticker'],
+                        'type' => 'offering',
+                        'ticker' => $ipo['ticker'],
+                        'title' => 'Penawaran Berakhir Hari Ini!',
+                        'message' => "Masa penawaran {$ipo['ticker']} berakhir hari ini! Buruan pesan kalau belum.",
+                        'icon' => '⏰',
+                        'color' => 'rose',
+                    ];
+                }
+                $tomorrow = now()->addDay()->format('Y-m-d');
+                if ($endDate === $tomorrow) {
+                    $notifications[] = [
+                        'id' => 'offering_end_tomorrow_' . $ipo['ticker'],
+                        'type' => 'offering',
+                        'ticker' => $ipo['ticker'],
+                        'title' => 'Penawaran Berakhir Besok!',
+                        'message' => "Masa penawaran {$ipo['ticker']} berakhir besok! Jangan sampai kelewatan ya.",
+                        'icon' => '⏰',
+                        'color' => 'amber',
+                    ];
+                }
+            }
+        }
+
+        return $notifications;
     }
 }

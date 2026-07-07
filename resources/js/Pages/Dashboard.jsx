@@ -57,7 +57,7 @@ const BROKERS = [
     { id: "Other", name: "Other" }
 ];
 
-export default function Dashboard({ auth, summary, charts, accountSids, emitenList, activeIpos, ipoCalendar, ipoDetails, ipoSubscriptions }) {
+export default function Dashboard({ auth, summary, charts, accountSids, emitenList, activeIpos, ipoCalendar, ipoDetails, ipoSubscriptions, notifications = [] }) {
     const { flash } = usePage().props;
     const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899'];
 
@@ -72,8 +72,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     const [isTrxModalOpen, setIsTrxModalOpen] = useState(false);
     const [selectedIpoDetails, setSelectedIpoDetails] = useState(null);
     const countdown = useCountdown(selectedIpoDetails?.schedule?.listing_date);
-    const [isPriceModalOpen, setIsPriceModalOpen] = useState(false);
-    const [priceData, setPriceData] = useState({ id: null, price: '' });
     const [selectedSid, setSelectedSid] = useState(null);
     const [isSyncing, setIsSyncing] = useState(false);
     const [stockQuery, setStockQuery] = useState('');
@@ -108,9 +106,46 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         }
     }, [isDarkMode]);
 
-    // Avg Down Calculator State
-    const [isAvgCalcOpen, setIsAvgCalcOpen] = useState(false);
-    const [avgCalcData, setAvgCalcData] = useState({ trx: null, additionalLots: '', newPrice: '' });
+    // Login Prompt State (for guest users)
+    const [isLoginPromptOpen, setIsLoginPromptOpen] = useState(false);
+
+    // Notification Center State
+    const [isNotifOpen, setIsNotifOpen] = useState(false);
+    const [dismissedNotifs, setDismissedNotifs] = useState(() => {
+        if (typeof window !== 'undefined') {
+            try { return JSON.parse(localStorage.getItem('dismissedNotifs') || '[]'); } catch { return []; }
+        }
+        return [];
+    });
+    const activeNotifications = notifications.filter(n => !dismissedNotifs.includes(n.id));
+    const dismissNotif = (id) => {
+        const updated = [...dismissedNotifs, id];
+        setDismissedNotifs(updated);
+        localStorage.setItem('dismissedNotifs', JSON.stringify(updated));
+    };
+
+    // Announcement Popup State
+    const [showAnnouncement, setShowAnnouncement] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const today = new Date().toISOString().split('T')[0];
+            return localStorage.getItem('announcementDismissed') !== today;
+        }
+        return true;
+    });
+    const dismissAnnouncement = () => {
+        setShowAnnouncement(false);
+        const today = new Date().toISOString().split('T')[0];
+        localStorage.setItem('announcementDismissed', today);
+    };
+
+    // Helper: require login for actions
+    const requireLogin = (callback) => {
+        if (!auth.user) {
+            setIsLoginPromptOpen(true);
+            return;
+        }
+        callback();
+    };
 
     useEffect(() => {
         if (flash.success && flash.success !== toast.message) {
@@ -141,11 +176,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         });
     };
 
-    const handleManualPrice = (stockId, currentPrice, basePrice) => {
-        setPriceData({ id: stockId, price: currentPrice, base_price: basePrice });
-        setIsPriceModalOpen(true);
-    };
-
     const getBrokerLogo = (brokerName) => {
         if (!brokerName) return null;
         const domains = {
@@ -169,15 +199,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         return `https://ui-avatars.com/api/?name=${brokerName.charAt(0)}&background=random&color=fff&size=128&font-size=0.4&bold=true`;
     };
 
-    const submitPriceUpdate = (e) => {
-        e.preventDefault();
-        if (priceData.price !== '' && !isNaN(priceData.price)) {
-            router.post(route('stocks.updatePrice', priceData.id), { current_price: priceData.price }, {
-                preserveScroll: true,
-                onSuccess: () => setIsPriceModalOpen(false)
-            });
-        }
-    };
+    const submitPriceUpdate = null; // Removed - price is display only now
 
     const { data: sidData, setData: setSidData, post: postSid, processing: processingSid, reset: resetSid } = useForm({
         sid_name: '',
@@ -261,28 +283,36 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     };
 
     const openTrxModal = (sidId) => {
-        setTrxData('account_sid_id', sidId);
-        setIsTrxModalOpen(true);
+        requireLogin(() => {
+            setTrxData('account_sid_id', sidId);
+            setIsTrxModalOpen(true);
+        });
     };
 
     const openEditSid = (sid) => {
-        setTargetSid(sid);
-        setEditSidData({ sid_name: sid.sid_name, broker_name: sid.broker_name || '' });
-        setIsEditSidModalOpen(true);
+        requireLogin(() => {
+            setTargetSid(sid);
+            setEditSidData({ sid_name: sid.sid_name, broker_name: sid.broker_name || '' });
+            setIsEditSidModalOpen(true);
+        });
     };
 
     const openDeleteSid = (sid) => {
-        setTargetSid(sid);
-        setIsDeleteSidModalOpen(true);
+        requireLogin(() => {
+            setTargetSid(sid);
+            setIsDeleteSidModalOpen(true);
+        });
     };
 
     const openSellModal = (trx) => {
-        setTargetSellTrx(trx);
-        setSellData({
-            sell_price: trx.stock.current_price ?? trx.buy_price,
-            lots: trx.lots,
+        requireLogin(() => {
+            setTargetSellTrx(trx);
+            setSellData({
+                sell_price: trx.stock.current_price ?? trx.buy_price,
+                lots: trx.lots,
+            });
+            setIsSellModalOpen(true);
         });
-        setIsSellModalOpen(true);
     };
 
     const submitSell = (e) => {
@@ -306,24 +336,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         });
     };
 
-    const calculateAvgDown = () => {
-        if (!avgCalcData.trx) return null;
-        const oldLots = avgCalcData.trx.lots;
-        const oldPrice = avgCalcData.trx.buy_price;
-        const addLots = parseInt(avgCalcData.additionalLots) || 0;
-        const newPrice = parseInt(avgCalcData.newPrice) || 0;
-
-        if (addLots === 0 || newPrice === 0) return null;
-
-        const totalOldCost = oldLots * 100 * oldPrice;
-        const totalNewCost = addLots * 100 * newPrice;
-        const newAvg = (totalOldCost + totalNewCost) / ((oldLots + addLots) * 100);
-        return {
-            newAvgPrice: Math.round(newAvg),
-            totalNewCapital: totalOldCost + totalNewCost
-        };
-    };
-
     const submitEditSid = (e) => {
         e.preventDefault();
         putSid(route('sids.update', targetSid.id), {
@@ -338,14 +350,18 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     };
 
     const openEditTrx = (trx) => {
-        setTargetTrx(trx);
-        setEditTrxData({ ipo_price: trx.buy_price, lots: trx.lots });
-        setIsEditTrxModalOpen(true);
+        requireLogin(() => {
+            setTargetTrx(trx);
+            setEditTrxData({ ipo_price: trx.buy_price, lots: trx.lots });
+            setIsEditTrxModalOpen(true);
+        });
     };
 
     const openDeleteTrx = (trx) => {
-        setTargetTrx(trx);
-        setIsDeleteTrxModalOpen(true);
+        requireLogin(() => {
+            setTargetTrx(trx);
+            setIsDeleteTrxModalOpen(true);
+        });
     };
 
     const submitEditTrx = (e) => {
@@ -404,12 +420,69 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                         )}
                                         <div className="hidden sm:flex items-center space-x-3">
                                             <span className="text-sm font-semibold text-gray-800 dark:text-zinc-200 leading-tight whitespace-nowrap">{auth.user.name}</span>
-                                            <button onClick={() => setIsTierModalOpen(true)} className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full ${currentTier.bg} transition-all duration-300 group cursor-help border border-zinc-200/50 dark:border-zinc-700/50 shadow-sm hover:shadow-md hover:-translate-y-0.5`}>
-                                                <span className={`${currentTier.color} group-hover:scale-110 transition-transform scale-90`}>{currentTier.icon}</span>
-                                                <span className={`text-[11px] font-bold ${currentTier.color}`}>{currentTier.name}</span>
-                                            </button>
                                         </div>
+                                        <button onClick={() => setIsTierModalOpen(true)} className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-full ${currentTier.bg} transition-all duration-300 group cursor-help border border-zinc-200/50 dark:border-zinc-700/50 shadow-sm hover:shadow-md hover:-translate-y-0.5`}>
+                                            <span className={`${currentTier.color} group-hover:scale-110 transition-transform scale-90`}>{currentTier.icon}</span>
+                                            <span className={`text-[11px] font-bold ${currentTier.color} hidden sm:inline`}>{currentTier.name}</span>
+                                        </button>
                                         <div className="w-px h-5 md:h-6 bg-zinc-200 dark:bg-zinc-800 mx-1 md:mx-2 hidden sm:block"></div>
+                                        {/* Notification Bell */}
+                                        <div className="relative">
+                                            <button onClick={() => setIsNotifOpen(!isNotifOpen)} className="p-2 text-zinc-400 hover:text-gojek-500 dark:hover:text-gojek-400 hover:bg-gojek-50 dark:hover:bg-gojek-900/30 rounded-lg transition-colors relative" title="Notifikasi">
+                                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                                                {activeNotifications.length > 0 && (
+                                                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-rose-500 text-white text-[9px] font-black rounded-full flex items-center justify-center animate-pulse shadow-sm">{activeNotifications.length > 9 ? '9+' : activeNotifications.length}</span>
+                                                )}
+                                            </button>
+                                            {/* Notification Dropdown */}
+                                            {isNotifOpen && (
+                                                <>
+                                                    <div className="fixed inset-0 z-40" onClick={() => setIsNotifOpen(false)}></div>
+                                                    <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 max-h-[70vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 animate-fade-in-up">
+                                                        <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between sticky top-0 bg-white dark:bg-zinc-900 z-10 rounded-t-2xl">
+                                                            <h3 className="text-base sm:text-lg font-black text-zinc-800 dark:text-white">🔔 Notifikasi</h3>
+                                                            <button onClick={() => setIsNotifOpen(false)} className="p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                                            </button>
+                                                        </div>
+                                                        {activeNotifications.length === 0 ? (
+                                                            <div className="p-6 text-center">
+                                                                <div className="w-12 h-12 mx-auto bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-3">
+                                                                    <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                                                                </div>
+                                                                <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">Semua notifikasi sudah di-cek! 👍</p>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                                                                {activeNotifications.map(notif => (
+                                                                    <div key={notif.id} className="p-3 sm:p-4 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
+                                                                        <div className="flex items-start space-x-3">
+                                                                            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 text-base sm:text-lg ${
+                                                                                notif.color === 'emerald' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
+                                                                                notif.color === 'blue' ? 'bg-blue-100 dark:bg-blue-900/30' :
+                                                                                notif.color === 'rose' ? 'bg-rose-100 dark:bg-rose-900/30' :
+                                                                                notif.color === 'amber' ? 'bg-amber-100 dark:bg-amber-900/30' :
+                                                                                'bg-gojek-100 dark:bg-gojek-900/30'
+                                                                            }`}>{notif.icon}</div>
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <div className="flex items-center space-x-2 mb-0.5">
+                                                                                    <span className="text-xs font-black text-gojek-600 dark:text-gojek-400 uppercase tracking-wider">{notif.ticker}</span>
+                                                                                </div>
+                                                                                <p className="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-100 leading-tight">{notif.title}</p>
+                                                                                <p className="text-[11px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">{notif.message}</p>
+                                                                            </div>
+                                                                            <button onClick={() => dismissNotif(notif.id)} className="p-1 text-zinc-300 dark:text-zinc-600 hover:text-zinc-500 dark:hover:text-zinc-400 opacity-0 group-hover:opacity-100 transition-all rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 shrink-0" title="Dismiss">
+                                                                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
                                         <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 text-zinc-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg transition-colors" title="Toggle Theme">
                                             {isDarkMode ? (
                                                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -532,20 +605,20 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                     </button>
                                     {auth.user ? (
                                         <button
-                                            onClick={() => setIsSidModalOpen(true)}
+                                            onClick={() => requireLogin(() => setIsSidModalOpen(true))}
                                             className="whitespace-nowrap inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
                                         >
                                             <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
                                             Tambah Akun SID
                                         </button>
                                     ) : (
-                                        <Link
-                                            href={route('login')}
+                                        <button
+                                            onClick={() => setIsLoginPromptOpen(true)}
                                             className="whitespace-nowrap inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-white transition-all duration-200 bg-gojek-500 border border-transparent rounded-lg hover:bg-gojek-600 shadow-sm focus:outline-none"
                                         >
                                             <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                             Login Buat Pantau
-                                        </Link>
+                                        </button>
                                     )}
                                 </div>
                             </div>
@@ -660,16 +733,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-zinc-600 dark:text-zinc-300">{trx.lots}</td>
                                                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-zinc-600 dark:text-zinc-300">{formatIDR(trx.buy_price)}</td>
                                                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                                                                            <div className="relative group/tooltip inline-flex items-center justify-end">
-                                                                                <button onClick={() => handleManualPrice(stock.id, currentPrice, trx.buy_price)} className="flex items-center space-x-1.5 px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800/50 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all border border-zinc-200/50 dark:border-zinc-700 hover:border-gojek-300 dark:hover:border-gojek-600 group/btn">
-                                                                                    <span className="font-extrabold text-zinc-800 dark:text-zinc-200 group-hover/btn:text-gojek-600 dark:group-hover/btn:text-gojek-400 transition-colors">{formatIDR(currentPrice)}</span>
-                                                                                    <svg className="w-3.5 h-3.5 text-zinc-400 dark:text-zinc-500 group-hover/btn:text-gojek-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                                                                                </button>
-                                                                                <div className="absolute bottom-full right-0 mb-2 invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-all z-50 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold px-3 py-2 rounded-xl shadow-xl whitespace-nowrap border border-zinc-800 dark:border-zinc-200">
-                                                                                    ✏️ Ubah Harga Pasar
-                                                                                    <div className="absolute top-full right-6 w-2.5 h-2.5 bg-zinc-900 dark:bg-white rotate-45 -mt-1.5 border-r border-b border-zinc-800 dark:border-zinc-200"></div>
-                                                                                </div>
-                                                                            </div>
+                                                                            <span className="font-extrabold text-zinc-800 dark:text-zinc-200">{formatIDR(currentPrice)}</span>
                                                                         </td>
                                                                         <td className="px-6 py-4 whitespace-nowrap text-right">
                                                                             <div className={`text-sm font-semibold ${floating > 0 ? 'text-emerald-600 dark:text-emerald-400' : floating < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-zinc-600 dark:text-zinc-400'}`}>
@@ -681,13 +745,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                         </td>
                                                                         <td className="px-6 py-4 whitespace-nowrap text-right">
                                                                             <div className="flex items-center justify-end space-x-1">
-                                                                                <div className="relative group/tooltip">
-                                                                                    <button onClick={() => { setAvgCalcData({ trx: trx, additionalLots: '', newPrice: '' }); setIsAvgCalcOpen(true); }} className="p-1.5 text-gojek-500 hover:text-gojek-700 hover:bg-gojek-50 dark:hover:bg-gojek-900/30 rounded-lg transition-colors"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg></button>
-                                                                                    <div className="absolute bottom-full right-0 mb-2 invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-all z-50 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-bold px-3 py-2 rounded-xl shadow-xl whitespace-nowrap border border-zinc-800 dark:border-zinc-200">
-                                                                                        🧮 Simulasikan Average
-                                                                                        <div className="absolute top-full right-2 w-2.5 h-2.5 bg-zinc-900 dark:bg-white rotate-45 -mt-1.5 border-r border-b border-zinc-800 dark:border-zinc-200"></div>
-                                                                                    </div>
-                                                                                </div>
                                                                                 {trx.status === 'open' && (
                                                                                     <div className="relative group/tooltip">
                                                                                         <button onClick={() => openSellModal(trx)} className="p-1.5 text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg transition-colors"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></button>
@@ -2076,6 +2133,103 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                     </div>
                 </Dialog>
             </Transition>
+
+            {/* Login Prompt Modal (for guest users) */}
+            <Transition appear show={isLoginPromptOpen} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={() => setIsLoginPromptOpen(false)}>
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800">
+                                    <div className="text-center mb-6">
+                                        <div className="w-20 h-20 mx-auto bg-gojek-100 dark:bg-gojek-900/30 rounded-full flex items-center justify-center mb-4 shadow-xl">
+                                            <span className="text-4xl">🔐</span>
+                                        </div>
+                                        <Dialog.Title as="h3" className="text-2xl font-black leading-6 text-zinc-900 dark:text-white mb-2">
+                                            Login Dulu Bosku!
+                                        </Dialog.Title>
+                                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                            Buat nambahin SID atau saham, lu mesti login dulu biar data portofolio lu aman dan tersimpan dengan baik.
+                                        </p>
+                                    </div>
+                                    <div className="flex space-x-3">
+                                        <button type="button" onClick={() => setIsLoginPromptOpen(false)} className="flex-1 px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors">Nanti Aja</button>
+                                        <Link href={route('login')} className="flex-1 px-4 py-3 rounded-xl bg-gojek-500 text-white font-bold hover:bg-gojek-600 transition-colors flex justify-center items-center shadow-md">
+                                            Login Sekarang
+                                        </Link>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+
+            {/* Global Announcement Popup (Synced with Calendar) */}
+            <Transition appear show={showAnnouncement && activeNotifications.length > 0} as={Fragment}>
+                <Dialog as="div" className="relative z-50" onClose={dismissAnnouncement}>
+                    <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+                        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
+                    </Transition.Child>
+                    <div className="fixed inset-0 overflow-y-auto">
+                        <div className="flex min-h-full items-center justify-center p-4 sm:p-0 text-center">
+                            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enterTo="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 translate-y-0 sm:scale-100" leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-6 sm:p-10 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800 relative">
+                                    <button onClick={dismissAnnouncement} className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-full transition-colors">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                    
+                                    <div className="flex flex-col items-center text-center">
+                                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-tr from-amber-400 to-rose-500 rounded-full flex items-center justify-center mb-6 shadow-xl text-white">
+                                            <svg className="w-10 h-10 sm:w-12 sm:h-12 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
+                                        </div>
+                                        <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white mb-3">
+                                            INFO PENTING HARI INI! 🚀
+                                        </h2>
+                                        <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 mb-8 max-w-sm">
+                                            Jangan sampe kelewatan momen penting portofolio IPO lu. Ada update jadwal dari BEI yang perlu lu pantau.
+                                        </p>
+
+                                        <div className="w-full space-y-4 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                                            {activeNotifications.slice(0, 3).map((notif, idx) => (
+                                                <div key={`announcement-${idx}`} className={`p-4 rounded-2xl border flex items-start space-x-4 text-left ${
+                                                    notif.color === 'emerald' ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800' :
+                                                    notif.color === 'blue' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' :
+                                                    notif.color === 'rose' ? 'bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800' :
+                                                    notif.color === 'amber' ? 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' :
+                                                    'bg-gojek-50 dark:bg-gojek-900/20 border-gojek-200 dark:border-gojek-800'
+                                                }`}>
+                                                    <div className="text-3xl shrink-0">{notif.icon}</div>
+                                                    <div>
+                                                        <div className="flex items-center space-x-2 mb-1">
+                                                            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-white dark:bg-zinc-800 shadow-sm">{notif.ticker}</span>
+                                                        </div>
+                                                        <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 leading-tight">{notif.title}</h4>
+                                                        <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">{notif.message}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {activeNotifications.length > 3 && (
+                                                <div className="text-center text-sm font-bold text-zinc-500 pt-2">
+                                                    Dan {activeNotifications.length - 3} notifikasi lainnya...
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <button onClick={dismissAnnouncement} className="w-full mt-8 px-6 py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-xl text-sm sm:text-base">
+                                            Siap, Mantap! 👍
+                                        </button>
+                                    </div>
+                                </Dialog.Panel>
+                            </Transition.Child>
+                        </div>
+                    </div>
+                </Dialog>
+            </Transition>
+
             
             <FeedbackWidget />
         </div>

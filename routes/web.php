@@ -12,15 +12,15 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 // Public wrapped route
 Route::get('/wrapped/{token}', [WrappedController::class, 'showPublic'])->name('wrapped.public');
 
+// Dashboard accessible without login (public view)
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Album Koleksi
     Route::get('/collection', [\App\Http\Controllers\CollectionController::class, 'index'])->name('collection.index');
