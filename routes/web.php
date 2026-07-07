@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/stocks/{stock}/update-price', [StockSyncController::class, 'updatePrice'])->name('stocks.updatePrice');
     Route::get('/api/stocks/{ticker}/live-price', [StockSyncController::class, 'getLivePrice'])->name('stocks.livePrice');
 
+    Route::post('/push-subscriptions', [\App\Http\Controllers\PushSubscriptionController::class, 'subscribe'])->name('push.subscribe');
+    Route::post('/push-subscriptions/delete', [\App\Http\Controllers\PushSubscriptionController::class, 'unsubscribe'])->name('push.unsubscribe');
+
     Route::post('/feedbacks', [\App\Http\Controllers\FeedbackController::class, 'store'])->name('feedbacks.store');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
