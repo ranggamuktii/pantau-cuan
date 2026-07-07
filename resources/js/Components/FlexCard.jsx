@@ -79,16 +79,20 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                                 const isLoss = stock.percentage < 0;
                                 return (
                                     <div key={i} className="flex flex-col justify-center px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-colors relative overflow-hidden">
-                                        <div className="flex items-center justify-between mb-1 relative z-10">
-                                            <span className="text-base font-black text-white">{stock.code}</span>
-                                        </div>
-                                        <div className={`flex items-center space-x-1 font-black text-sm relative z-10 ${isProfit ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-zinc-400'}`}>
-                                            {isProfit && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
-                                            {isLoss && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>}
-                                            {!isProfit && !isLoss && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 12h14" /></svg>}
-                                            <span>
-                                                {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
-                                            </span>
+                                        <div className="flex items-center justify-between mb-0 relative z-10">
+                                            <div className="flex items-center space-x-2">
+                                                {stock.logo && (
+                                                    <img src={stock.logo} alt={stock.code} className="w-6 h-6 rounded-full border border-white/20 object-cover bg-white" />
+                                                )}
+                                                <span className="text-base font-black text-white">{stock.code}</span>
+                                            </div>
+                                            <div className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg ${isProfit ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : isLoss ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-zinc-800/80 text-zinc-300 border border-zinc-700'} font-black text-xs`}>
+                                                {isProfit && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+                                                {isLoss && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>}
+                                                <span>
+                                                    {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
+                                                </span>
+                                            </div>
                                         </div>
                                         {/* Subtle background glow for profit/loss */}
                                         {isProfit && <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-500/10 blur-[10px] rounded-full translate-x-4 -translate-y-4"></div>}
