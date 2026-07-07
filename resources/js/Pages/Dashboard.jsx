@@ -2039,19 +2039,19 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                     <div className="fixed inset-0 overflow-y-auto">
                         <div className="flex min-h-full items-center justify-center p-4 sm:p-0 text-center">
                             <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" enterTo="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200" leaveFrom="opacity-100 translate-y-0 sm:scale-100" leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-6 sm:p-10 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800 relative">
+                                <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-[2rem] bg-white dark:bg-zinc-900 p-6 sm:p-8 text-left align-middle shadow-2xl transition-all border border-zinc-200 dark:border-zinc-800 relative">
                                     <button onClick={dismissAnnouncement} className="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 rounded-full transition-colors">
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                     </button>
                                     
                                     <div className="flex flex-col items-center text-center">
-                                        <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-tr from-amber-400 to-rose-500 rounded-full flex items-center justify-center mb-6 shadow-xl text-white">
-                                            <svg className="w-10 h-10 sm:w-12 sm:h-12 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
+                                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-400 to-rose-500 rounded-full flex items-center justify-center mb-4 shadow-xl text-white">
+                                            <svg className="w-8 h-8 sm:w-10 sm:h-10 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>
                                         </div>
-                                        <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white mb-3">
+                                        <h2 className="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white mb-2">
                                             INFO PENTING HARI INI!
                                         </h2>
-                                        <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-300 mb-8 max-w-sm">
+                                        <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 mb-6 max-w-sm">
                                             Jangan sampe kelewatan momen penting portofolio IPO lu. Ada update jadwal dari BEI yang perlu lu pantau.
                                         </p>
 
@@ -2088,9 +2088,9 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                             )}
                                         </div>
 
-                                        <button onClick={dismissAnnouncement} className="w-full mt-8 px-6 py-4 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-xl text-sm sm:text-base flex items-center justify-center">
+                                        <button onClick={dismissAnnouncement} className="w-full mt-6 px-6 py-3 rounded-xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold hover:scale-[1.02] active:scale-95 transition-all shadow-xl text-sm flex items-center justify-center">
                                             Siap, Mantap!
-                                            <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                                            <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
                                         </button>
                                     </div>
                                 </Dialog.Panel>
