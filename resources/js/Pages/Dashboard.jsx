@@ -440,7 +440,10 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                     <div className="fixed inset-0 z-40" onClick={() => setIsNotifOpen(false)}></div>
                                                     <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 max-h-[70vh] overflow-y-auto bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl z-50 animate-fade-in-up">
                                                         <div className="p-4 border-b border-zinc-100 dark:border-zinc-800 flex items-center justify-between sticky top-0 bg-white dark:bg-zinc-900 z-10 rounded-t-2xl">
-                                                            <h3 className="text-base sm:text-lg font-black text-zinc-800 dark:text-white">🔔 Notifikasi</h3>
+                                                            <h3 className="text-base sm:text-lg font-black text-zinc-800 dark:text-white flex items-center">
+                                                                <svg className="w-5 h-5 mr-2 text-gojek-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                                                                Notifikasi
+                                                            </h3>
                                                             <button onClick={() => setIsNotifOpen(false)} className="p-1 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
                                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                                             </button>
@@ -450,7 +453,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                 <div className="w-12 h-12 mx-auto bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-3">
                                                                     <svg className="w-6 h-6 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
                                                                 </div>
-                                                                <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">Semua notifikasi sudah di-cek! 👍</p>
+                                                                <p className="text-sm text-zinc-500 dark:text-zinc-400 font-medium">Semua notifikasi sudah di-cek!</p>
                                                             </div>
                                                         ) : (
                                                             <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
@@ -463,7 +466,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                                 notif.color === 'rose' ? 'bg-rose-100 dark:bg-rose-900/30' :
                                                                                 notif.color === 'amber' ? 'bg-amber-100 dark:bg-amber-900/30' :
                                                                                 'bg-gojek-100 dark:bg-gojek-900/30'
-                                                                            }`}>{notif.icon}</div>
+                                                                            }`}>{notif.icon === 'calendar' ? <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> : notif.icon === 'box' ? <svg className="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg> : notif.icon === 'rocket' ? <svg className="w-5 h-5 text-gojek-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg> : notif.icon === 'bell' ? <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg> : notif.icon === 'clock' ? <svg className="w-5 h-5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> : notif.icon}</div>
                                                                             <div className="flex-1 min-w-0">
                                                                                 <div className="flex items-center space-x-2 mb-0.5">
                                                                                     <span className="text-xs font-black text-gojek-600 dark:text-gojek-400 uppercase tracking-wider">{notif.ticker}</span>
