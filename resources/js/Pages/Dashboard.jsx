@@ -2157,8 +2157,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 </Dialog>
             </Transition>
 
-            </Transition>
-
             {/* Hidden component strictly for generating image */}
             <div className="fixed top-0 left-[-9999px] z-[-1] pointer-events-none opacity-0">
                 <FlexCard 
