@@ -28,11 +28,15 @@ Route::get('/proxy-logo', function (\Illuminate\Http\Request $request) {
     // Simple validation to only allow e-ipo.co.id
     if (!str_contains($url, 'e-ipo.co.id')) return abort(403);
     
-    $response = \Illuminate\Support\Facades\Http::get($url);
+    $response = \Illuminate\Support\Facades\Http::withHeaders([
+        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    ])->get($url);
+
     if ($response->ok()) {
         return response($response->body(), 200)
-            ->header('Content-Type', $response->header('Content-Type'))
-            ->header('Access-Control-Allow-Origin', '*');
+            ->header('Content-Type', $response->header('Content-Type', 'image/jpeg'))
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Cache-Control', 'public, max-age=86400');
     }
     return abort(404);
 })->name('proxy.logo');
