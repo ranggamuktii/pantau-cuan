@@ -1,34 +1,21 @@
 import { forwardRef } from 'react';
 
-const FlexCard = forwardRef(({ user, totalProfit, activeStocks, privacyMode = false, isDarkMode = true }, ref) => {
-    // Determine Bandar Tier based on totalProfit
-    let pangkat = "Investor Pemula";
-    let tierColor = "text-zinc-500";
-    let badgeBg = "bg-zinc-100";
-    let icon = "🌱";
-    
-    if (totalProfit >= 100000000) { // 100 Juta+
-        pangkat = "Bandar Paus";
-        tierColor = "text-amber-500";
-        badgeBg = "bg-amber-50";
-        icon = "🐋";
-    } else if (totalProfit >= 10000000) { // 10 Juta+
-        pangkat = "Bandar Kakap";
-        tierColor = "text-emerald-500";
-        badgeBg = "bg-emerald-50";
-        icon = "🦈";
-    } else if (totalProfit >= 1000000) { // 1 Juta+
-        pangkat = "Trader Jagoan";
-        tierColor = "text-blue-500";
-        badgeBg = "bg-blue-50";
-        icon = "🦅";
-    }
+const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, ref) => {
+    // Determine Bandar Tier based on the passed tier object from Dashboard
+    let pangkat = tier?.name || "Kuli Pasar";
+    let icon = tier?.icon || "🌱";
+    let tierColor = tier?.name === 'Anak Sultan' ? 'text-purple-500' :
+                    tier?.name === 'Bandar Cilik' ? 'text-blue-500' :
+                    tier?.name === 'Juragan ARA' ? 'text-emerald-500' :
+                    tier?.name === 'Pedagang Asongan' ? 'text-amber-500' :
+                    'text-zinc-500';
+    let badgeBg = tier?.name === 'Anak Sultan' ? 'bg-purple-50' :
+                  tier?.name === 'Bandar Cilik' ? 'bg-blue-50' :
+                  tier?.name === 'Juragan ARA' ? 'bg-emerald-50' :
+                  tier?.name === 'Pedagang Asongan' ? 'bg-amber-50' :
+                  'bg-zinc-100';
 
-    const formatRupiah = (number) => {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
-    };
-
-    // Card Colors based on theme (always dark mode for now to keep premium feel, but simpler)
+    // Card Colors based on theme
     const bgClass = "bg-[#0A0A0A]";
     const textMain = "text-white";
     const textMuted = "text-zinc-400";
@@ -49,26 +36,24 @@ const FlexCard = forwardRef(({ user, totalProfit, activeStocks, privacyMode = fa
                     </div>
                 </div>
                 <div className={`px-3 py-1.5 rounded-full ${badgeBg} flex items-center space-x-1.5`}>
-                    <span className="text-sm">{icon}</span>
+                    <span className="text-sm w-4 h-4 flex items-center justify-center text-current">{icon}</span>
                     <span className={`text-[10px] font-black uppercase tracking-wider ${tierColor}`}>{pangkat}</span>
                 </div>
             </div>
 
             {/* Main Stats */}
             <div className="relative z-10 flex-1 flex flex-col justify-center">
-                <p className={`text-xs font-semibold ${textMuted} mb-3 uppercase tracking-widest`}>Total Potensi Profit</p>
+                <p className={`text-xs font-semibold ${textMuted} mb-3 uppercase tracking-widest`}>Portofolio Tracker</p>
                 
                 <div className="flex flex-col items-start">
-                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none mb-3 break-all">
-                        {privacyMode ? 'Rp ***.***' : formatRupiah(totalProfit)}
+                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+                        Cuan Maksimal!
                     </span>
                     
-                    {totalProfit > 0 && !privacyMode && (
-                        <div className="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-bold">
-                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                            All Time High
-                        </div>
-                    )}
+                    <div className="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-bold mt-2">
+                        <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                        All Time High
+                    </div>
                 </div>
             </div>
 

@@ -153,7 +153,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     // Flexing States
     const flexCardRef = useRef(null);
     const [isFlexModalOpen, setIsFlexModalOpen] = useState(false);
-    const [flexPrivacyMode, setFlexPrivacyMode] = useState(false);
     const [isGeneratingFlex, setIsGeneratingFlex] = useState(false);
     const [flexImageUrl, setFlexImageUrl] = useState(null);
 
@@ -191,7 +190,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 generateFlexImage();
             }, 300);
         }
-    }, [isFlexModalOpen, flexPrivacyMode]);
+    }, [isFlexModalOpen]);
 
     useEffect(() => {
         if (flash.success && flash.success !== toast.message) {
@@ -2167,9 +2166,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                 <FlexCard 
                     ref={flexCardRef}
                     user={auth.user}
-                    totalProfit={(summary?.totalFloatingProfit || 0) + (summary?.totalNetProfit || 0)}
-                    activeStocks={auth.user && accountSids ? accountSids.flatMap(sid => sid.transactions.map(trx => trx.stock?.stock_code || trx.stock_code)) : []}
-                    privacyMode={flexPrivacyMode}
+                    tier={currentTier}
+                    activeStocks={[...new Set(auth.user && accountSids ? accountSids.flatMap(sid => sid.transactions.filter(t => t.status === 'closed' || t.status === 'open').map(trx => trx.stock?.stock_code || trx.stock_code)) : [])]}
                 />
             </div>
 
@@ -2177,24 +2175,10 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
             <Modal show={isFlexModalOpen} onClose={() => setIsFlexModalOpen(false)} maxWidth="sm">
                 <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Flexing Cuan 📸</h2>
+                        <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Flexing Status 📸</h2>
                         <button onClick={() => setIsFlexModalOpen(false)} className="text-zinc-400 hover:text-zinc-600 transition">
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
-                    </div>
-
-                    <div className="mb-4 p-3 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
-                        <label className="flex items-center justify-between cursor-pointer">
-                            <div>
-                                <p className="text-sm font-bold text-zinc-800 dark:text-zinc-200">Mode Privasi</p>
-                                <p className="text-xs text-zinc-500">Sembunyikan nominal Rupiah</p>
-                            </div>
-                            <div className="relative">
-                                <input type="checkbox" className="sr-only" checked={flexPrivacyMode} onChange={(e) => setFlexPrivacyMode(e.target.checked)} />
-                                <div className={`block w-10 h-6 rounded-full transition-colors ${flexPrivacyMode ? 'bg-emerald-500' : 'bg-zinc-300 dark:bg-zinc-700'}`}></div>
-                                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${flexPrivacyMode ? 'transform translate-x-4' : ''}`}></div>
-                            </div>
-                        </label>
                     </div>
 
                     <div className="w-full flex justify-center mb-6 bg-zinc-100/50 dark:bg-[#0A0A0A]/50 rounded-2xl p-6 overflow-hidden border border-zinc-200/50 dark:border-zinc-800/50 relative min-h-[300px] sm:min-h-[400px]">
