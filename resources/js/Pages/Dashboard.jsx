@@ -248,9 +248,19 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         if (!ticker) return null;
         const allIpos = [...(activeIpos || []), ...(ipoCalendar || [])];
         const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
+        
         if (ipo && typeof ipo.id === 'number') {
-            return `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
+            // Proxy e-ipo.co.id logos to avoid CORS issues when generating images
+            const originalUrl = `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
+            return `/proxy-logo?url=${encodeURIComponent(originalUrl)}`;
+        } else if (ipo && ipo.logo) {
+            if (ipo.logo.includes('e-ipo.co.id')) {
+                return `/proxy-logo?url=${encodeURIComponent(ipo.logo)}`;
+            }
+            return ipo.logo;
         }
+        
+        // Fallback to ui-avatars
         return `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`;
     };
 

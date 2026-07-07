@@ -20,6 +20,23 @@ Route::get('/wrapped/{token}', [WrappedController::class, 'showPublic'])->name('
 // Dashboard accessible without login (public view)
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+// Proxy route for external logos to prevent CORS issues with html-to-image
+Route::get('/proxy-logo', function (\Illuminate\Http\Request $request) {
+    $url = $request->query('url');
+    if (!$url) return abort(400);
+    
+    // Simple validation to only allow e-ipo.co.id
+    if (!str_contains($url, 'e-ipo.co.id')) return abort(403);
+    
+    $response = \Illuminate\Support\Facades\Http::get($url);
+    if ($response->ok()) {
+        return response($response->body(), 200)
+            ->header('Content-Type', $response->header('Content-Type'))
+            ->header('Access-Control-Allow-Origin', '*');
+    }
+    return abort(404);
+})->name('proxy.logo');
+
 Route::middleware('auth')->group(function () {
     
     // Album Koleksi
