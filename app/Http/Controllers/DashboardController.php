@@ -336,6 +336,16 @@ class DashboardController extends Controller
                 }
             }
         }
+        // System Update Notification
+        array_unshift($notifications, [
+            'id' => 'feature_flexing_v2',
+            'type' => 'system',
+            'ticker' => 'NEW!',
+            'title' => 'Flexing Cuan V2 Rilis! 📸',
+            'message' => 'Cobain fitur pamer cuan terbaru! Sekarang kartu flexing tampil lebih elegan dengan detail persentase profit per saham & auto-generate avatar dari inisial nama lo. Udah siap pamer?',
+            'icon' => 'rocket',
+            'color' => 'gojek',
+        ]);
 
         return $notifications;
     }
