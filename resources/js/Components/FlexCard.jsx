@@ -50,7 +50,7 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                 <p className={`text-xs font-semibold ${textMuted} mb-3 uppercase tracking-widest`}>Portofolio Tracker</p>
                 
                 <div className="flex flex-col items-start">
-                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
+                    <span className="text-3xl font-black tracking-tight leading-none mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
                         Cuan Maksimal!
                     </span>
                     
@@ -72,10 +72,10 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                                 const isLoss = stock.percentage < 0;
                                 return (
                                     <div key={i} className={`flex items-center justify-between px-3 py-2 bg-zinc-900/80 rounded-xl border border-zinc-800/80 backdrop-blur-sm`}>
-                                        <span className={`text-xs font-black ${textMain}`}>{stock.code}</span>
-                                        <div className={`flex items-center space-x-0.5 font-bold text-xs ${isProfit ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-zinc-500'}`}>
-                                            {isProfit && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>}
-                                            {isLoss && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>}
+                                        <span className={`text-sm font-black ${textMain}`}>{stock.code}</span>
+                                        <div className={`flex items-center space-x-1 font-black text-sm ${isProfit ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-zinc-500'}`}>
+                                            {isProfit && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>}
+                                            {isLoss && <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>}
                                             <span>
                                                 {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
                                             </span>
@@ -90,9 +90,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                 <div className={`flex items-center justify-between pt-5 border-t ${borderClass}`}>
                     <div className="flex items-center space-x-3">
                         <img 
-                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'I')}&background=18181b&color=fff&size=128&bold=true`} 
+                            src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'I')}&background=18181b&color=fff&size=128&bold=true`} 
                             alt="Avatar" 
-                            className="w-8 h-8 rounded-full border border-zinc-800" 
+                            className="w-9 h-9 rounded-full border-2 border-zinc-700/50 shadow-sm object-cover" 
                         />
                         <div>
                             <p className="text-sm font-bold leading-none">{user?.name || 'Investor'}</p>

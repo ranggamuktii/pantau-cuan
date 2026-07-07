@@ -2177,13 +2177,18 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                 if (!code) return;
                                 
                                 // For closed transactions, we have exact net_profit
-                                // For open transactions, it might not have net_profit calculated from floating yet.
-                                // We'll just sum what's available. Usually net_profit is populated for closed.
-                                // If floating profit is not available here, we'll only accurately measure closed.
-                                const profit = Number(trx.net_profit) || 0;
+                                // For open transactions, we calculate floating profit
+                                let profit = 0;
                                 const ipoPrice = Number(trx.ipo_price) || Number(trx.stock?.ipo_price) || 0;
                                 const lots = Number(trx.lots) || 0;
                                 const capital = ipoPrice * lots * 100;
+                                
+                                if (trx.status === 'closed') {
+                                    profit = Number(trx.net_profit) || 0;
+                                } else if (trx.status === 'open') {
+                                    const currentPrice = trx.stock?.current_price || ipoPrice;
+                                    profit = (currentPrice - ipoPrice) * lots * 100;
+                                }
                                 
                                 if (!stockMap[code]) stockMap[code] = { profit: 0, capital: 0 };
                                 stockMap[code].profit += profit;
