@@ -7,6 +7,7 @@ import FeedbackWidget from '@/Components/FeedbackWidget';
 import confetti from 'canvas-confetti';
 import { toPng } from 'html-to-image';
 import FlexCard from '@/Components/FlexCard';
+import Modal from '@/Components/Modal';
 
 const useCountdown = (targetDateStr) => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true });
