@@ -2163,7 +2163,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                     ref={flexCardRef}
                     user={auth.user}
                     totalProfit={(summary?.totalFloatingProfit || 0) + (summary?.totalNetProfit || 0)}
-                    activeStocks={auth.user ? Object.values(groupedBySid).flatMap(sid => sid.map(trx => trx.stock.stock_code)) : []}
+                    activeStocks={auth.user && accountSids ? accountSids.flatMap(sid => sid.transactions.map(trx => trx.stock?.stock_code || trx.stock_code)) : []}
                     privacyMode={flexPrivacyMode}
                 />
             </div>
