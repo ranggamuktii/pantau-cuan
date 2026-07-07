@@ -35,9 +35,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                         <span className="font-bold text-xs tracking-widest uppercase opacity-70">Pantau Cuan</span>
                     </div>
                 </div>
-                <div className={`px-3 py-1.5 rounded-full ${badgeBg} flex items-center space-x-1.5`}>
-                    <span className="text-sm w-4 h-4 flex items-center justify-center text-current">{icon}</span>
-                    <span className={`text-[10px] font-black uppercase tracking-wider ${tierColor}`}>{pangkat}</span>
+                <div className={`px-3 py-1.5 rounded-full ${badgeBg} ${tierColor} flex items-center space-x-1.5`}>
+                    <span className="text-sm w-4 h-4 flex items-center justify-center">{icon}</span>
+                    <span className="text-[10px] font-black uppercase tracking-wider">{pangkat}</span>
                 </div>
             </div>
 
@@ -61,17 +61,28 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             <div className="relative z-10 mt-auto">
                 {activeStocks && activeStocks.length > 0 && (
                     <div className="mb-8">
-                        <p className={`text-[10px] font-bold ${textMuted} mb-3 uppercase tracking-widest`}>Portofolio Andalan</p>
-                        <div className="flex flex-wrap gap-2">
-                            {activeStocks.slice(0, 5).map((stock, i) => (
-                                <span key={i} className={`px-3 py-1.5 bg-zinc-900 rounded-md text-xs font-bold ${textMain} border border-zinc-800`}>
-                                    {stock}
-                                </span>
-                            ))}
-                            {activeStocks.length > 5 && (
-                                <span className={`px-3 py-1.5 bg-transparent rounded-md text-xs font-medium ${textMuted}`}>
-                                    +{activeStocks.length - 5} lainnya
-                                </span>
+                        <p className={`text-[10px] font-bold ${textMuted} mb-3 uppercase tracking-widest`}>Koleksi IPO</p>
+                        <div className="flex flex-col space-y-2">
+                            {activeStocks.slice(0, 4).map((stock, i) => {
+                                const isProfit = stock.percentage > 0;
+                                const isLoss = stock.percentage < 0;
+                                return (
+                                    <div key={i} className={`flex items-center justify-between px-4 py-3 bg-zinc-900 rounded-xl border border-zinc-800`}>
+                                        <span className={`text-sm font-black ${textMain}`}>{stock.code}</span>
+                                        <div className={`flex items-center space-x-1 font-bold text-sm ${isProfit ? 'text-emerald-400' : isLoss ? 'text-rose-400' : 'text-zinc-500'}`}>
+                                            {isProfit && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>}
+                                            {isLoss && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>}
+                                            <span>
+                                                {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            {activeStocks.length > 4 && (
+                                <div className={`text-center py-1.5 text-[10px] font-bold uppercase tracking-wider ${textMuted}`}>
+                                    +{activeStocks.length - 4} Emiten Lainnya
+                                </div>
                             )}
                         </div>
                     </div>

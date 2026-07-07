@@ -2167,7 +2167,39 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                     ref={flexCardRef}
                     user={auth.user}
                     tier={currentTier}
-                    activeStocks={[...new Set(auth.user && accountSids ? accountSids.flatMap(sid => sid.transactions.filter(t => t.status === 'closed' || t.status === 'open').map(trx => trx.stock?.stock_code || trx.stock_code)) : [])]}
+                    activeStocks={(() => {
+                        if (!auth.user || !accountSids) return [];
+                        const stockMap = {};
+                        accountSids.forEach(sid => {
+                            sid.transactions.forEach(trx => {
+                                if (trx.status !== 'closed' && trx.status !== 'open') return;
+                                const code = trx.stock?.stock_code || trx.stock_code;
+                                if (!code) return;
+                                
+                                // For closed transactions, we have exact net_profit
+                                // For open transactions, it might not have net_profit calculated from floating yet.
+                                // We'll just sum what's available. Usually net_profit is populated for closed.
+                                // If floating profit is not available here, we'll only accurately measure closed.
+                                const profit = Number(trx.net_profit) || 0;
+                                const ipoPrice = Number(trx.ipo_price) || Number(trx.stock?.ipo_price) || 0;
+                                const lots = Number(trx.lots) || 0;
+                                const capital = ipoPrice * lots * 100;
+                                
+                                if (!stockMap[code]) stockMap[code] = { profit: 0, capital: 0 };
+                                stockMap[code].profit += profit;
+                                stockMap[code].capital += capital;
+                            });
+                        });
+                        
+                        return Object.keys(stockMap)
+                            .map(code => {
+                                const data = stockMap[code];
+                                const pct = data.capital > 0 ? (data.profit / data.capital) * 100 : 0;
+                                return { code, percentage: pct };
+                            })
+                            // filter out 0% if you want, or just sort
+                            .sort((a, b) => b.percentage - a.percentage);
+                    })()}
                 />
             </div>
 
