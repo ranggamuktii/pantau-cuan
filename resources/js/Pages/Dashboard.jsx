@@ -2197,17 +2197,22 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                         </label>
                     </div>
 
-                    <div className="w-full flex justify-center mb-6 bg-zinc-100 dark:bg-zinc-900 rounded-xl p-4 overflow-hidden border border-zinc-200 dark:border-zinc-800">
+                    <div className="w-full flex justify-center mb-6 bg-zinc-100/50 dark:bg-[#0A0A0A]/50 rounded-2xl p-6 overflow-hidden border border-zinc-200/50 dark:border-zinc-800/50 relative min-h-[300px] sm:min-h-[400px]">
                         {isGeneratingFlex ? (
-                            <div className="h-[400px] w-full flex flex-col items-center justify-center text-zinc-400">
-                                <svg className="animate-spin h-8 w-8 mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                <span className="text-sm font-bold">Mencetak Kartu Flex...</span>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm z-10">
+                                <svg className="animate-spin h-10 w-10 mb-4 text-emerald-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                <span className="text-sm font-bold tracking-widest uppercase">Memproses Gambar...</span>
                             </div>
-                        ) : flexImageUrl ? (
-                            <img src={flexImageUrl} alt="Cuan Pamer" className="w-[80%] rounded-2xl shadow-xl border border-zinc-200/20" />
-                        ) : (
-                            <div className="h-[400px] w-full flex items-center justify-center text-red-500">Gagal generate</div>
-                        )}
+                        ) : null}
+                        
+                        {flexImageUrl ? (
+                            <img src={flexImageUrl} alt="Cuan Pamer" className="w-auto h-full max-h-[350px] sm:max-h-[450px] object-contain rounded-2xl shadow-2xl border border-zinc-200/20" />
+                        ) : !isGeneratingFlex ? (
+                            <div className="flex items-center justify-center h-full text-rose-500 text-sm font-bold flex-col">
+                                <svg className="w-8 h-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                Gambar gagal dibuat
+                            </div>
+                        ) : null}
                     </div>
 
                     <button

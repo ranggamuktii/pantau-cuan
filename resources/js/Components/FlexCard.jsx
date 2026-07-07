@@ -1,100 +1,105 @@
 import { forwardRef } from 'react';
 
-const FlexCard = forwardRef(({ user, totalProfit, activeStocks, privacyMode = false }, ref) => {
+const FlexCard = forwardRef(({ user, totalProfit, activeStocks, privacyMode = false, isDarkMode = true }, ref) => {
     // Determine Bandar Tier based on totalProfit
-    let pangkat = "Bandar Teri";
-    let tierColor = "from-zinc-400 to-zinc-600";
-    let icon = "🐟";
+    let pangkat = "Investor Pemula";
+    let tierColor = "text-zinc-500";
+    let badgeBg = "bg-zinc-100";
+    let icon = "🌱";
     
     if (totalProfit >= 100000000) { // 100 Juta+
         pangkat = "Bandar Paus";
-        tierColor = "from-amber-400 to-orange-600";
+        tierColor = "text-amber-500";
+        badgeBg = "bg-amber-50";
         icon = "🐋";
     } else if (totalProfit >= 10000000) { // 10 Juta+
         pangkat = "Bandar Kakap";
-        tierColor = "from-emerald-400 to-teal-600";
+        tierColor = "text-emerald-500";
+        badgeBg = "bg-emerald-50";
         icon = "🦈";
+    } else if (totalProfit >= 1000000) { // 1 Juta+
+        pangkat = "Trader Jagoan";
+        tierColor = "text-blue-500";
+        badgeBg = "bg-blue-50";
+        icon = "🦅";
     }
 
     const formatRupiah = (number) => {
         return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
     };
 
+    // Card Colors based on theme (always dark mode for now to keep premium feel, but simpler)
+    const bgClass = "bg-[#0A0A0A]";
+    const textMain = "text-white";
+    const textMuted = "text-zinc-400";
+    const borderClass = "border-zinc-800";
+
     return (
-        <div ref={ref} className="w-[360px] h-[640px] relative overflow-hidden bg-zinc-950 rounded-3xl text-white font-sans flex flex-col justify-between p-8" style={{ background: 'linear-gradient(135deg, #09090b 0%, #18181b 100%)' }}>
-            {/* Background Decorations */}
-            <div className={`absolute top-[-10%] right-[-20%] w-64 h-64 bg-gradient-to-br ${tierColor} rounded-full blur-[80px] opacity-40`}></div>
-            <div className={`absolute bottom-[-10%] left-[-20%] w-64 h-64 bg-gradient-to-tr ${tierColor} rounded-full blur-[80px] opacity-40`}></div>
+        <div ref={ref} className={`w-[360px] h-[640px] relative overflow-hidden ${bgClass} ${textMain} rounded-3xl font-sans flex flex-col p-8`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+            
+            {/* Minimalist Grid Background */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
 
             {/* Header */}
-            <div className="relative z-10">
-                <div className="flex items-center space-x-3 mb-8">
-                    <img src="/pantau-cuan-logo.svg" alt="Logo" className="h-6 opacity-70 mb-1" />
-                    <span className="font-extrabold text-sm tracking-widest uppercase text-zinc-400">Pantau Cuan</span>
-                </div>
-                
-                <h2 className="text-4xl font-black mb-2 leading-tight">IPO <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-emerald-600">Wrapped</span></h2>
-                
-                <div className="mt-8 p-5 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-2xl">
-                    <p className="text-sm text-zinc-400 font-bold mb-1">Status Kehormatan</p>
-                    <div className="flex items-center space-x-3">
-                        <span className="text-4xl">{icon}</span>
-                        <div>
-                            <p className={`text-xl font-black text-transparent bg-clip-text bg-gradient-to-r ${tierColor}`}>{pangkat}</p>
-                            <p className="text-xs text-zinc-300 font-medium">Verified IPO Hunter</p>
-                        </div>
+            <div className="relative z-10 flex justify-between items-start mb-10">
+                <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                        <img src="/pantau-cuan-logo.svg" alt="Logo" className="h-5 opacity-90" />
+                        <span className="font-bold text-xs tracking-widest uppercase opacity-70">Pantau Cuan</span>
                     </div>
+                </div>
+                <div className={`px-3 py-1.5 rounded-full ${badgeBg} flex items-center space-x-1.5`}>
+                    <span className="text-sm">{icon}</span>
+                    <span className={`text-[10px] font-black uppercase tracking-wider ${tierColor}`}>{pangkat}</span>
                 </div>
             </div>
 
             {/* Main Stats */}
-            <div className="relative z-10 my-8">
-                <p className="text-sm font-bold text-zinc-400 mb-2 uppercase tracking-widest">Total Potensi Cuan</p>
-                <div className="flex items-baseline space-x-2">
-                    <span className="text-5xl font-black text-white drop-shadow-lg">
-                        {privacyMode ? 'Rp ✦✦✦.✦✦✦' : formatRupiah(totalProfit)}
+            <div className="relative z-10 flex-1 flex flex-col justify-center">
+                <p className={`text-xs font-semibold ${textMuted} mb-3 uppercase tracking-widest`}>Total Potensi Profit</p>
+                
+                <div className="flex flex-col items-start">
+                    <span className="text-4xl sm:text-5xl font-black tracking-tight leading-none mb-3 break-all">
+                        {privacyMode ? 'Rp ***.***' : formatRupiah(totalProfit)}
                     </span>
+                    
+                    {totalProfit > 0 && !privacyMode && (
+                        <div className="inline-flex items-center px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm font-bold">
+                            <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                            All Time High
+                        </div>
+                    )}
                 </div>
-                {totalProfit > 0 && !privacyMode && (
-                    <div className="mt-3 inline-flex items-center px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-sm font-bold border border-emerald-500/30">
-                        <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
-                        All Time High
-                    </div>
-                )}
             </div>
 
-            {/* Footer / Stocks */}
+            {/* Stocks & Footer */}
             <div className="relative z-10 mt-auto">
                 {activeStocks && activeStocks.length > 0 && (
-                    <div className="mb-6">
-                        <p className="text-xs text-zinc-500 font-bold mb-2 uppercase">Saham Jagoan</p>
+                    <div className="mb-8">
+                        <p className={`text-[10px] font-bold ${textMuted} mb-3 uppercase tracking-widest`}>Portofolio Andalan</p>
                         <div className="flex flex-wrap gap-2">
-                            {activeStocks.slice(0, 4).map((stock, i) => (
-                                <span key={i} className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-bold text-white border border-white/10 backdrop-blur-sm">
+                            {activeStocks.slice(0, 5).map((stock, i) => (
+                                <span key={i} className={`px-3 py-1.5 bg-zinc-900 rounded-md text-xs font-bold ${textMain} border border-zinc-800`}>
                                     {stock}
                                 </span>
                             ))}
-                            {activeStocks.length > 4 && (
-                                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-xs font-bold text-zinc-400">
-                                    +{activeStocks.length - 4} lainnya
+                            {activeStocks.length > 5 && (
+                                <span className={`px-3 py-1.5 bg-transparent rounded-md text-xs font-medium ${textMuted}`}>
+                                    +{activeStocks.length - 5} lainnya
                                 </span>
                             )}
                         </div>
                     </div>
                 )}
                 
-                <div className="flex items-center justify-between pt-6 border-t border-white/10">
-                    <div>
-                        <p className="text-sm font-bold text-white">{user?.name || 'Investor'}</p>
-                        <p className="text-[10px] text-zinc-500 font-semibold uppercase tracking-wider">PantauCuan.com</p>
-                    </div>
-                    <div className="w-12 h-12 bg-white rounded-xl p-1 flex items-center justify-center">
-                        {/* Placeholder QR Code - Just a stylized box for now */}
-                        <div className="w-full h-full border-[3px] border-zinc-950 p-1 flex flex-wrap gap-0.5 relative">
-                            <div className="w-2.5 h-2.5 bg-zinc-950"></div>
-                            <div className="w-2.5 h-2.5 bg-zinc-950"></div>
-                            <div className="w-2.5 h-2.5 bg-zinc-950"></div>
-                            <div className="w-2.5 h-2.5 bg-zinc-950"></div>
+                <div className={`flex items-center justify-between pt-5 border-t ${borderClass}`}>
+                    <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold">
+                            {(user?.name || 'I').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <p className="text-sm font-bold leading-none">{user?.name || 'Investor'}</p>
+                            <p className={`text-[10px] ${textMuted} mt-1`}>pantaucuan.site</p>
                         </div>
                     </div>
                 </div>
