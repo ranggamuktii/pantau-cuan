@@ -25,29 +25,27 @@ Route::get('/proxy-logo', function (\Illuminate\Http\Request $request) {
     $url = $request->query('url');
     if (!$url) return abort(400);
     
-    // Simple validation to only allow e-ipo.co.id
-    if (!str_contains($url, 'e-ipo.co.id')) return abort(403);
+    // Simple validation to only allow e-ipo.co.id and stockbit
+    if (!str_contains($url, 'e-ipo.co.id') && !str_contains($url, 'stockbit.com')) {
+        return abort(403);
+    }
     
     $response = \Illuminate\Support\Facades\Http::withHeaders([
         'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept' => 'image/webp,image/apng,image/*,*/*;q=0.8',
-        'Referer' => 'https://e-ipo.co.id/'
+        'Referer' => str_contains($url, 'e-ipo.co.id') ? 'https://e-ipo.co.id/' : 'https://stockbit.com/'
     ])->get($url);
 
     if ($response->successful()) {
         return response($response->body(), 200)
-            ->header('Content-Type', $response->header('Content-Type', 'image/jpeg'))
+            ->header('Content-Type', $response->header('Content-Type', 'image/png'))
             ->header('Access-Control-Allow-Origin', '*')
             ->header('Cache-Control', 'public, max-age=86400');
     }
     
-    // Fallback if e-ipo fails (e.g. 403, 404)
-    // We generate a simple SVG directly so it NEVER fails and requires no external HTTP request!
-    parse_str(parse_url($url, PHP_URL_QUERY), $query);
-    $ticker = $request->query('ticker') ?? 'IP';
-    $name = strtoupper(substr($ticker, 0, 2) ?: 'IP');
-    
-    $svg = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#18181b"/><text x="50" y="50" font-family="sans-serif" font-size="40" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="central">' . $name . '</text></svg>';
+    // Fallback if the upstream fails (e.g. 403, 404)
+    // We return the beautiful SVG fallback directly from the local file
+    $svg = file_get_contents(public_path('fallback-stock.svg'));
 
     return response($svg, 200)
         ->header('Content-Type', 'image/svg+xml')
