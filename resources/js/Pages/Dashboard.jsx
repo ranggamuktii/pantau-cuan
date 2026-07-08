@@ -2143,9 +2143,11 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                         {!['calendar', 'box', 'rocket', 'bell', 'clock'].includes(notif.icon) && notif.icon}
                                                     </div>
                                                     <div>
-                                                        <div className="flex items-center space-x-1.5 mb-1">
-                                                            <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-5 h-5 rounded-full object-contain bg-white shadow-sm border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${notif.ticker?.substring(0, 2)}&background=random&color=fff`; }} />
-                                                            <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-white dark:bg-zinc-800 shadow-sm">{notif.ticker}</span>
+                                                        <div className="flex items-center space-x-2 mb-1">
+                                                            {notif.type !== 'system' && (
+                                                                <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-6 h-6 rounded-full object-cover bg-white shadow-md border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${notif.ticker?.substring(0, 2)}&background=random&color=fff`; }} />
+                                                            )}
+                                                            <span className="px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-widest bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md">{notif.ticker}</span>
                                                         </div>
                                                         <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 leading-tight">{notif.title}</h4>
                                                         <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">{notif.message}</p>
