@@ -267,6 +267,20 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         return `https://assets.stockbit.com/logos/companies/${ticker}.png`;
     };
 
+    const getBadgeColor = (type, text, isDropdown = false) => {
+        if (type !== 'system') {
+            return isDropdown 
+                ? 'bg-zinc-800 text-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 shadow-sm'
+                : 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md';
+        }
+        const t = (text || '').toUpperCase();
+        if (t.includes('NEW') || t.includes('ERROR') || t.includes('FAIL') || t.includes('DANGER')) return 'bg-rose-500 text-white shadow-md shadow-rose-500/20';
+        if (t.includes('WARN') || t.includes('ALERT')) return 'bg-amber-500 text-white shadow-md shadow-amber-500/20';
+        if (t.includes('SUCC') || t.includes('DONE') || t.includes('WIN')) return 'bg-emerald-500 text-white shadow-md shadow-emerald-500/20';
+        if (t.includes('INFO') || t.includes('UPDATE')) return 'bg-blue-500 text-white shadow-md shadow-blue-500/20';
+        return 'bg-gojek-500 text-white shadow-md shadow-gojek-500/20';
+    };
+
     const submitPriceUpdate = null; // Removed - price is display only now
 
     const { data: sidData, setData: setSidData, post: postSid, processing: processingSid, reset: resetSid } = useForm({
@@ -540,7 +554,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                                     {notif.type !== 'system' && (
                                                                                         <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-5 h-5 rounded-full object-cover bg-white shadow-sm border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; }} />
                                                                                     )}
-                                                                                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-zinc-800 text-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 shadow-sm">{notif.ticker}</span>
+                                                                                    <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest ${getBadgeColor(notif.type, notif.ticker, true)}`}>{notif.ticker}</span>
                                                                                 </div>
                                                                                 <p className="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-100 leading-tight">{notif.title}</p>
                                                                                 <p className="text-[11px] sm:text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">{notif.message}</p>
@@ -2152,7 +2166,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                             {notif.type !== 'system' && (
                                                                 <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-6 h-6 rounded-full object-cover bg-white shadow-md border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; }} />
                                                             )}
-                                                            <span className="px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-widest bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md">{notif.ticker}</span>
+                                                            <span className={`px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-widest ${getBadgeColor(notif.type, notif.ticker, false)}`}>{notif.ticker}</span>
                                                         </div>
                                                         <h4 className="font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 leading-tight">{notif.title}</h4>
                                                         <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 mt-1">{notif.message}</p>
