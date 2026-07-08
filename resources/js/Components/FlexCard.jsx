@@ -31,9 +31,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
         badgeBg: "bg-emerald-500/10 border-emerald-500/20",
         badgeTextClass: "text-emerald-400",
         badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
-        glow1: "from-emerald-500/5 via-transparent to-teal-500/5",
-        glow2: "from-emerald-500/20",
-        glow3: "from-teal-500/20",
+        glow1: "from-emerald-950/40 via-[#030303] to-teal-950/40",
+        glow2: "from-emerald-500/40",
+        glow3: "from-teal-500/40",
         pulsePoint: "bg-emerald-500"
     };
 
@@ -45,9 +45,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             badgeBg: "bg-rose-500/10 border-rose-500/20",
             badgeTextClass: "text-rose-400",
             badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>,
-            glow1: "from-rose-500/5 via-transparent to-red-500/5",
-            glow2: "from-rose-500/20",
-            glow3: "from-red-500/20",
+            glow1: "from-rose-950/40 via-[#030303] to-red-950/40",
+            glow2: "from-rose-500/40",
+            glow3: "from-red-500/40",
             pulsePoint: "bg-rose-500"
         };
     } else if (totalProfit === 0 && activeStocks?.length === 0) {
@@ -58,9 +58,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             badgeBg: "bg-blue-500/10 border-blue-500/20",
             badgeTextClass: "text-blue-400",
             badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
-            glow1: "from-blue-500/5 via-transparent to-indigo-500/5",
-            glow2: "from-blue-500/20",
-            glow3: "from-indigo-500/20",
+            glow1: "from-blue-950/40 via-[#030303] to-indigo-950/40",
+            glow2: "from-blue-500/40",
+            glow3: "from-indigo-500/40",
             pulsePoint: "bg-blue-500"
         };
     }
@@ -68,13 +68,24 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
     return (
         <div ref={ref} className={`w-[400px] min-h-[640px] relative overflow-hidden bg-[#030303] text-white rounded-[2.5rem] font-sans flex flex-col p-10 border border-zinc-800/80 shadow-2xl`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
 
-            {/* Premium Background Gradients & Lighting (Replaced blur with radial gradients for html-to-image compatibility) */}
+            {/* Studio Lighting & Gaussian Blurs */}
             <div className={`absolute inset-0 bg-gradient-to-br ${statusConfig.glow1}`}></div>
-            <div className={`absolute -top-32 -left-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ${statusConfig.glow2} to-transparent rounded-full pointer-events-none`}></div>
-            <div className={`absolute -bottom-32 -right-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ${statusConfig.glow3} to-transparent rounded-full pointer-events-none`}></div>
-
-            {/* Minimalist Grid Pattern */}
-            <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
+            
+            {/* Top Gaussian Light (Studio Reflector Effect) */}
+            <div className={`absolute -top-32 -left-16 w-[150%] h-[400px] bg-gradient-to-b ${statusConfig.glow2} to-transparent blur-[100px] opacity-70 pointer-events-none mix-blend-screen`}></div>
+            
+            {/* Bottom Gaussian Light */}
+            <div className={`absolute -bottom-40 -right-16 w-[150%] h-[400px] bg-gradient-to-t ${statusConfig.glow3} to-transparent blur-[120px] opacity-80 pointer-events-none mix-blend-screen`}></div>
+            
+            {/* Digital Imaging Studio Grid */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.08]" 
+                 style={{ 
+                    backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', 
+                    backgroundSize: '32px 32px',
+                    maskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)'
+                 }}>
+            </div>
 
             {/* Header */}
             <div className="relative z-10 flex justify-center items-center mb-10">
