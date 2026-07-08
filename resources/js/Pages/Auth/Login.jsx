@@ -70,7 +70,7 @@ export default function Login({ status }) {
             });
 
             if (response.status === 419) {
-                alert("Sesi sudah kedaluwarsa. Halaman akan dimuat ulang otomatis...");
+                // Silently reload the page to refresh CSRF token without annoying the user
                 window.location.reload();
                 return;
             }
