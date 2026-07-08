@@ -184,6 +184,39 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         link.click();
     };
 
+    const handleShareFlex = async () => {
+        if (!flexImageUrl) return;
+        try {
+            // Convert data url to blob
+            const response = await fetch(flexImageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], `cuan-pamer-${Date.now()}.png`, { type: 'image/png' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    title: 'Pantau Cuan - Portofolio',
+                    text: 'Lagi flexing portofolio saham dari Pantau Cuan nih!',
+                    files: [file]
+                });
+            } else {
+                // Fallback if file share is not supported
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'Pantau Cuan',
+                        text: 'Lagi flexing portofolio saham dari Pantau Cuan nih! Cek aplikasinya di https://pantaucuan.site',
+                    });
+                } else {
+                    setToast({ show: true, message: 'Browser tidak mendukung fitur bagikan otomatis. Silakan download gambarnya.', type: 'info' });
+                }
+            }
+        } catch (err) {
+            console.error('Error sharing:', err);
+            if (err.name !== 'AbortError') {
+                setToast({ show: true, message: 'Gagal membagikan gambar.', type: 'error' });
+            }
+        }
+    };
+
     useEffect(() => {
         if (isFlexModalOpen) {
             setFlexImageUrl(null);
@@ -248,18 +281,8 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     };
 
     const getStockLogo = (ticker) => {
-        if (!ticker) return null;
-        const allIpos = [...(activeIpos || []), ...(ipoCalendar || [])];
-        const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
-        
-        if (ipo && typeof ipo.id === 'number') {
-            return `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
-        } else if (ipo && ipo.logo) {
-            return ipo.logo;
-        }
-        
-        // If not in active IPOs, it's likely already listed. Pull from Stockbit!
-        return `https://assets.stockbit.com/logos/companies/${ticker}.png`;
+        if (!ticker) return '/fallback-stock.svg';
+        return `/storage/logos/${ticker}.png`;
     };
 
     const getBadgeColor = (type, text, isDropdown = false) => {
@@ -2262,18 +2285,33 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                         ) : null}
                     </div>
 
-                    <button
-                        onClick={handleDownloadFlex}
-                        disabled={isGeneratingFlex || !flexImageUrl}
-                        className={`w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center transition-all ${
-                            isGeneratingFlex || !flexImageUrl 
-                                ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed' 
-                                : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25 active:scale-95'
-                        }`}
-                    >
-                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        Download buat IG Story
-                    </button>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button
+                            onClick={handleDownloadFlex}
+                            disabled={isGeneratingFlex || !flexImageUrl}
+                            className={`w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center transition-all ${
+                                isGeneratingFlex || !flexImageUrl 
+                                    ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed' 
+                                    : 'bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 active:scale-95 shadow-sm'
+                            }`}
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            Download
+                        </button>
+                        
+                        <button
+                            onClick={handleShareFlex}
+                            disabled={isGeneratingFlex || !flexImageUrl}
+                            className={`w-full py-3 px-4 rounded-xl font-bold flex items-center justify-center transition-all ${
+                                isGeneratingFlex || !flexImageUrl 
+                                    ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed' 
+                                    : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25 active:scale-95'
+                            }`}
+                        >
+                            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                            Bagikan...
+                        </button>
+                    </div>
                 </div>
             </Modal>
 

@@ -1,172 +1,153 @@
-import { forwardRef } from 'react';
+import React, { forwardRef } from 'react';
 
 const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, ref) => {
-    // Determine Bandar Tier based on the passed tier object from Dashboard
-    let pangkat = tier?.name || "Kuli Pasar";
-    let icon = tier?.icon || "🌱";
-    let tierColor = tier?.name === 'Anak Sultan' ? 'text-purple-500' :
-        tier?.name === 'Bandar Cilik' ? 'text-blue-500' :
-            tier?.name === 'Juragan ARA' ? 'text-emerald-500' :
-                tier?.name === 'Pedagang Asongan' ? 'text-amber-500' :
-                    'text-zinc-500';
-    let badgeBg = tier?.name === 'Anak Sultan' ? 'bg-purple-50' :
-        tier?.name === 'Bandar Cilik' ? 'bg-blue-50' :
-            tier?.name === 'Juragan ARA' ? 'bg-emerald-50' :
-                tier?.name === 'Pedagang Asongan' ? 'bg-amber-50' :
-                    'bg-zinc-100';
-
-    // Card Colors based on theme
-    const bgClass = "bg-[#0A0A0A]";
-    const textMain = "text-white";
-    const textMuted = "text-zinc-400";
-    const borderClass = "border-zinc-800";
-
     const totalProfit = activeStocks?.reduce((acc, stock) => acc + (stock.profit || 0), 0) || 0;
-
-    // Dynamic styles based on totalProfit
+    
+    // Config based on overall profit
     let statusConfig = {
-        title: "Cuan Maksimal!",
-        titleGradient: "from-emerald-300 via-teal-200 to-emerald-400",
-        badgeText: "All Time High",
-        badgeBg: "bg-emerald-500/10 border-emerald-500/20",
-        badgeTextClass: "text-emerald-400",
-        badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
-        glow1: "from-emerald-950/40 via-[#030303] to-teal-950/40",
-        glow2: "from-emerald-500/40",
-        glow3: "from-teal-500/40",
-        pulsePoint: "bg-emerald-500"
+        title: "CUAN",
+        titleHighlight: "MAKSIMAL!",
+        highlightColor: "text-[#22c55e]", // emerald-500
+        subtitle: "Disiplin hari ini, bebas finansial nanti.",
+        iconBg: "bg-[#052e16]", // emerald-950
+        iconColor: "text-[#22c55e]"
     };
 
     if (totalProfit < 0) {
         statusConfig = {
-            title: "Sabar Bosku!",
-            titleGradient: "from-rose-300 via-red-200 to-rose-400",
-            badgeText: "Sedang Berdarah",
-            badgeBg: "bg-rose-500/10 border-rose-500/20",
-            badgeTextClass: "text-rose-400",
-            badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>,
-            glow1: "from-rose-950/40 via-[#030303] to-red-950/40",
-            glow2: "from-rose-500/40",
-            glow3: "from-red-500/40",
-            pulsePoint: "bg-rose-500"
+            title: "SABAR",
+            titleHighlight: "BOSKU!",
+            highlightColor: "text-[#ef4444]", // red-500
+            subtitle: "Tetap tenang, badai pasti berlalu.",
+            iconBg: "bg-[#450a0a]", // red-950
+            iconColor: "text-[#ef4444]"
         };
     } else if (totalProfit === 0 && activeStocks?.length === 0) {
         statusConfig = {
-            title: "Mulai Investasi!",
-            titleGradient: "from-blue-300 via-indigo-200 to-blue-400",
-            badgeText: "Siap Cuan",
-            badgeBg: "bg-blue-500/10 border-blue-500/20",
-            badgeTextClass: "text-blue-400",
-            badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
-            glow1: "from-blue-950/40 via-[#030303] to-indigo-950/40",
-            glow2: "from-blue-500/40",
-            glow3: "from-indigo-500/40",
-            pulsePoint: "bg-blue-500"
+            title: "MULAI",
+            titleHighlight: "INVESTASI!",
+            highlightColor: "text-[#3b82f6]", // blue-500
+            subtitle: "Waktunya alokasi modal bosku.",
+            iconBg: "bg-[#172554]", // blue-950
+            iconColor: "text-[#3b82f6]"
         };
     }
 
+    // Format current date
+    const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+    const formattedDate = new Intl.DateTimeFormat('id-ID', dateOptions).format(new Date());
+
     return (
-        <div ref={ref} className={`w-[400px] min-h-[640px] relative overflow-hidden bg-[#030303] text-white rounded-[2.5rem] font-sans flex flex-col p-10 border border-zinc-800/80 shadow-2xl`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
-
-            {/* Studio Lighting & Gaussian Blurs */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${statusConfig.glow1}`}></div>
-            
-            {/* Top Gaussian Light (Studio Reflector Effect) */}
-            <div className={`absolute -top-32 -left-16 w-[150%] h-[400px] bg-gradient-to-b ${statusConfig.glow2} to-transparent blur-[100px] opacity-70 pointer-events-none mix-blend-screen`}></div>
-            
-            {/* Bottom Gaussian Light */}
-            <div className={`absolute -bottom-40 -right-16 w-[150%] h-[400px] bg-gradient-to-t ${statusConfig.glow3} to-transparent blur-[120px] opacity-80 pointer-events-none mix-blend-screen`}></div>
-            
-            {/* Digital Imaging Studio Grid */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.08]" 
-                 style={{ 
-                    backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', 
-                    backgroundSize: '32px 32px',
-                    maskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)',
-                    WebkitMaskImage: 'radial-gradient(ellipse at center, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)'
-                 }}>
-            </div>
-
-            {/* Header */}
-            <div className="relative z-10 flex justify-center items-center mb-10">
-                <div className="flex items-center space-x-2">
-                    <img src="/pantau-cuan-logo.svg" alt="Logo" className="h-6 opacity-90" />
-                    <span className="font-black text-sm tracking-[0.2em] uppercase opacity-80">Pantau Cuan</span>
+        <div 
+            ref={ref} 
+            className="w-[400px] min-h-[640px] relative overflow-hidden bg-[#0A0D14] text-white flex flex-col p-8 pb-6 font-sans" 
+            style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+        >
+            {/* Header: Logo and App Name */}
+            <div className="flex items-center space-x-3 mb-10">
+                <div className={`w-10 h-10 ${statusConfig.iconBg} rounded-xl flex items-center justify-center`}>
+                    <svg className={`w-6 h-6 ${statusConfig.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L12 12l3 3 5-5m0 0h-4m4 0v4M4 17h.01" />
+                    </svg>
+                </div>
+                <div className="flex space-x-1 font-bold tracking-widest text-[13px] uppercase">
+                    <span className="text-white">PANTAU</span>
+                    <span className={statusConfig.highlightColor}>CUAN</span>
                 </div>
             </div>
 
-            {/* Main Stats */}
-            <div className="relative z-10 flex-1 flex flex-col justify-center py-6">
-                <p className={`text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-[0.2em] flex items-center`}>
-                    <span className={`w-2 h-2 rounded-full ${statusConfig.pulsePoint} mr-2 animate-pulse`}></span>
-                    Portofolio Tracker
-                </p>
-
-                <div className="flex flex-col items-start">
-                    <span className={`text-4xl font-black tracking-tighter leading-none mb-3 text-transparent bg-clip-text bg-gradient-to-r ${statusConfig.titleGradient} drop-shadow-sm`}>
-                        {statusConfig.title}
-                    </span>
-
-                    <div className={`inline-flex items-center px-4 py-2 rounded-xl border ${statusConfig.badgeBg} ${statusConfig.badgeTextClass} text-sm font-bold mt-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]`}>
-                        {statusConfig.badgeIcon}
-                        {statusConfig.badgeText}
-                    </div>
-                </div>
+            {/* Main Title Section */}
+            <div className="mb-8">
+                <h1 className="text-4xl font-black tracking-tight mb-2">
+                    <span className="text-white">{statusConfig.title} </span>
+                    <span className={statusConfig.highlightColor}>{statusConfig.titleHighlight}</span>
+                </h1>
+                <p className="text-[#8B95A5] text-[15px] font-medium">{statusConfig.subtitle}</p>
             </div>
 
-            {/* Stocks & Footer */}
-            <div className="relative z-10 mt-auto">
-                {activeStocks && activeStocks.length > 0 && (
-                    <div className="mb-10">
-                        <div className="flex items-center mb-4 text-zinc-400/90">
-                            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                            <p className="text-xs font-bold uppercase tracking-widest">Koleksi IPO</p>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                            {activeStocks.slice(0, 8).map((stock, i) => {
-                                const isProfit = stock.percentage > 0;
-                                const isLoss = stock.percentage < 0;
-                                return (
-                                    <div key={i} className="flex flex-col justify-center px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-colors relative overflow-hidden">
-                                        <div className="flex flex-col space-y-2 relative z-10">
-                                            <div className="flex items-center space-x-2">
-                                                {stock.logo && (
-                                                    <img src={stock.logo + (stock.logo.includes('?') ? '&' : '?') + 'cors=1'} crossOrigin="anonymous" alt={stock.code} className="w-7 h-7 rounded-full border border-white/20 object-cover bg-white" onError={(e) => { e.target.onerror = null; e.target.src = '/fallback-stock.svg'; }} />
-                                                )}
-                                                <span className="text-base font-black text-white">{stock.code}</span>
-                                            </div>
-                                            <div className={`inline-flex self-start items-center space-x-1 px-2.5 py-1 rounded-lg ${isProfit ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : isLoss ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-zinc-800/80 text-zinc-300 border border-zinc-700'} font-black text-xs`}>
-                                                {isProfit && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
-                                                {isLoss && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>}
-                                                <span>
-                                                    {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {/* Subtle background glow for profit/loss (Replaced blur with radial gradient) */}
-                                        {isProfit && <div className="absolute top-0 right-0 w-16 h-16 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/20 to-transparent rounded-full translate-x-4 -translate-y-4"></div>}
-                                        {isLoss && <div className="absolute top-0 right-0 w-16 h-16 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-500/20 to-transparent rounded-full translate-x-4 -translate-y-4"></div>}
+            {/* Stocks List */}
+            <div className="flex-1 flex flex-col space-y-3 relative z-10">
+                {activeStocks && activeStocks.length > 0 ? (
+                    activeStocks.slice(0, 5).map((stock, i) => {
+                        const isProfit = stock.percentage > 0;
+                        const isLoss = stock.percentage < 0;
+                        
+                        return (
+                            <div key={i} className="flex items-center justify-between p-4 bg-[#111621] rounded-2xl border border-[#1C2333] shadow-sm relative overflow-hidden">
+                                
+                                {/* Subtle internal glow */}
+                                {isProfit && <div className="absolute top-0 right-0 w-32 h-32 bg-[#22c55e] opacity-[0.03] blur-2xl pointer-events-none rounded-full translate-x-10 -translate-y-10"></div>}
+                                {isLoss && <div className="absolute top-0 right-0 w-32 h-32 bg-[#ef4444] opacity-[0.03] blur-2xl pointer-events-none rounded-full translate-x-10 -translate-y-10"></div>}
+
+                                <div className="flex items-center space-x-3 z-10 w-2/5">
+                                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
+                                        <img 
+                                            src={stock.logo + (stock.logo.includes('?') ? '&' : '?') + 'cors=1'} 
+                                            crossOrigin="anonymous" 
+                                            alt={stock.code} 
+                                            className="w-full h-full object-contain" 
+                                            onError={(e) => { e.target.onerror = null; e.target.src = '/fallback-stock.svg'; }} 
+                                        />
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-base font-bold text-white truncate">{stock.code}</span>
+                                        <span className="text-[11px] text-[#8B95A5] truncate font-medium">{stock.code} Corp.</span>
+                                    </div>
+                                </div>
+
+                                {/* Dummy Sparkline Area */}
+                                <div className="flex-1 h-8 flex items-center justify-center z-10 opacity-70 px-2">
+                                    {isProfit ? (
+                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#22c55e]">
+                                            <path d="M0,25 Q15,22 25,18 T45,15 T60,8 T80,5 T100,2" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    ) : isLoss ? (
+                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#ef4444]">
+                                            <path d="M0,5 Q15,8 25,12 T45,15 T60,22 T80,25 T100,28" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    ) : (
+                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#4B5563]">
+                                            <path d="M0,15 L20,14 L40,16 L60,15 L80,15 L100,16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    )}
+                                </div>
+
+                                {/* Badge */}
+                                <div className="z-10 w-24 flex justify-end">
+                                    <div className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border font-bold text-xs tabular-nums
+                                        ${isProfit ? 'bg-[#052e16] text-[#22c55e] border-[#064e3b]' : 
+                                          isLoss ? 'bg-[#450a0a] text-[#ef4444] border-[#7f1d1d]' : 
+                                          'bg-[#1C2333] text-[#8B95A5] border-[#2A3441]'}`}
+                                    >
+                                        {isProfit ? (
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M7 17L17 7m0 0H8m9 0v9" /></svg>
+                                        ) : isLoss ? (
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 17L7 7m10 10V8m0 9H8" /></svg>
+                                        ) : (
+                                            <span className="text-[10px]">−</span>
+                                        )}
+                                        <span>
+                                            {isProfit || isLoss ? Math.abs(stock.percentage).toFixed(1) + '%' : '0%'}
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="flex-1 flex items-center justify-center flex-col text-center opacity-50 py-10">
+                        <svg className="w-12 h-12 mb-3 text-[#8B95A5]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
+                        <p className="text-sm font-medium text-[#8B95A5]">Belum ada riwayat saham.</p>
                     </div>
                 )}
-
-                <div className={`flex items-center justify-between pt-6 border-t border-white/10`}>
-                    <div className="flex items-center space-x-4">
-                        <img
-                            src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'I')}&background=18181b&color=fff&size=128&bold=true`}
-                            alt="Avatar"
-                            className="w-10 h-10 rounded-full border-2 border-white/20 shadow-lg object-cover"
-                        />
-                        <div>
-                            <p className="text-base font-black leading-none text-white tracking-wide">{user?.name || 'Investor'}</p>
-                            <p className="text-[11px] font-semibold text-zinc-400 mt-1.5 uppercase tracking-widest">pantaucuan.site</p>
-                        </div>
-                    </div>
-                </div>
             </div>
+
+            {/* Footer */}
+            <div className="mt-8 pt-4 flex justify-center items-center text-center w-full">
+                <p className="text-[#64748B] text-xs font-medium tracking-wide">Data per {formattedDate}</p>
+            </div>
+            
         </div>
     );
 });
