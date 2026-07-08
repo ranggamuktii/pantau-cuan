@@ -2211,7 +2211,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
             </Transition>
 
             {/* Hidden component strictly for generating image */}
-            <div className="fixed top-0 left-[-9999px] z-[-1] pointer-events-none opacity-0">
+            <div style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '400px', height: '640px' }}>
                 <FlexCard 
                     ref={flexCardRef}
                     user={auth.user}
