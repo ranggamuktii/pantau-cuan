@@ -187,6 +187,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
     useEffect(() => {
         if (isFlexModalOpen) {
             setFlexImageUrl(null);
+            setIsGeneratingFlex(true);
             // small delay to let the DOM render before capturing
             setTimeout(() => {
                 generateFlexImage();
