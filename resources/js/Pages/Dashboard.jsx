@@ -165,7 +165,6 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
             const dataUrl = await toPng(flexCardRef.current, { 
                 cacheBust: true, 
                 quality: 0.95,
-                useCORS: true, // Allow fetching cross-origin images (like Stockbit) directly
                 fontEmbedCSS: '' // bypass cross-origin fonts issue
             });
             setFlexImageUrl(dataUrl);

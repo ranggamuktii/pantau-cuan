@@ -76,7 +76,7 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                                         <div className="flex flex-col space-y-2 relative z-10">
                                             <div className="flex items-center space-x-2">
                                                 {stock.logo && (
-                                                    <img src={stock.logo} alt={stock.code} className="w-7 h-7 rounded-full border border-white/20 object-cover bg-white" />
+                                                    <img src={stock.logo} crossOrigin="anonymous" alt={stock.code} className="w-7 h-7 rounded-full border border-white/20 object-cover bg-white" onError={(e) => { e.target.onerror = null; e.target.src = '/fallback-stock.svg'; }} />
                                                 )}
                                                 <span className="text-base font-black text-white">{stock.code}</span>
                                             </div>
