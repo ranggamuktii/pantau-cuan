@@ -9,6 +9,8 @@ import { toPng } from 'html-to-image';
 import FlexCard from '@/Components/FlexCard';
 import Modal from '@/Components/Modal';
 
+const FALLBACK_STOCK_LOGO = "/fallback-stock.svg";
+
 const useCountdown = (targetDateStr) => {
     const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, isPast: true });
 
@@ -249,20 +251,20 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         const allIpos = [...(activeIpos || []), ...(ipoCalendar || [])];
         const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
         
-        const fallbackUiAvatar = `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=18181b&color=fff`;
-        
         if (ipo && typeof ipo.id === 'number') {
             // Using wsrv.nl to bypass both e-ipo's WAF and canvas CORS issues cleanly
             const originalUrl = `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
-            return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&default=${encodeURIComponent(fallbackUiAvatar)}`;
+            const absoluteFallbackUrl = typeof window !== 'undefined' ? `${window.location.origin}${FALLBACK_STOCK_LOGO}` : '';
+            return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&default=${encodeURIComponent(absoluteFallbackUrl)}`;
         } else if (ipo && ipo.logo) {
             if (ipo.logo.includes('e-ipo.co.id')) {
-                return `https://wsrv.nl/?url=${encodeURIComponent(ipo.logo)}&default=${encodeURIComponent(fallbackUiAvatar)}`;
+                const absoluteFallbackUrl = typeof window !== 'undefined' ? `${window.location.origin}${FALLBACK_STOCK_LOGO}` : '';
+                return `https://wsrv.nl/?url=${encodeURIComponent(ipo.logo)}&default=${encodeURIComponent(absoluteFallbackUrl)}`;
             }
             return ipo.logo;
         }
         
-        return fallbackUiAvatar;
+        return FALLBACK_STOCK_LOGO;
     };
 
     const submitPriceUpdate = null; // Removed - price is display only now
@@ -536,7 +538,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                             <div className="flex-1 min-w-0">
                                                                                 <div className="flex items-center space-x-2 mb-1.5">
                                                                                     {notif.type !== 'system' && (
-                                                                                        <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-5 h-5 rounded-full object-cover bg-white shadow-sm border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${notif.ticker?.substring(0, 2)}&background=random&color=fff`; }} />
+                                                                                        <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-5 h-5 rounded-full object-cover bg-white shadow-sm border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; }} />
                                                                                     )}
                                                                                     <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-zinc-800 text-zinc-100 dark:bg-zinc-700 dark:text-zinc-100 shadow-sm">{notif.ticker}</span>
                                                                                 </div>
@@ -1011,7 +1013,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 {day && hasEvents && (
                                                     <div className="flex -space-x-1">
                                                         {uniqueIpos.slice(0, 3).map(({ ipo }) => (
-                                                            <img key={ipo.id} src={typeof ipo.id === 'number' ? `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}` : `https://ui-avatars.com/api/?name=${ipo.ticker?.substring(0, 2)}&background=000&color=fff`} alt="Logo" loading="lazy" className="w-3.5 h-3.5 rounded-full border border-white dark:border-zinc-800 bg-white object-contain shadow-sm" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ipo.ticker?.substring(0, 2)}&background=000&color=fff`; }} />
+                                                            <img key={ipo.id} src={typeof ipo.id === 'number' ? `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}` : FALLBACK_STOCK_LOGO} alt="Logo" loading="lazy" className="w-3.5 h-3.5 rounded-full border border-white dark:border-zinc-800 bg-white object-contain shadow-sm" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; }} />
                                                         ))}
                                                         {uniqueIpos.length > 3 && <span className="w-3.5 h-3.5 rounded-full bg-zinc-200 dark:bg-zinc-700 border border-white dark:border-zinc-800 text-[7px] flex items-center justify-center text-zinc-600 dark:text-zinc-300 font-bold leading-none shadow-sm">+{uniqueIpos.length - 3}</span>}
                                                     </div>
@@ -1031,7 +1033,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                                 return (
                                                                     <div key={ticker} className="flex items-center space-x-2">
                                                                         <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center p-px shrink-0 border border-zinc-200 dark:border-zinc-700 shadow-sm">
-                                                                            <img src={typeof ipo.id === 'number' ? `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}` : `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`} alt="Logo" className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`; }} />
+                                                                            <img src={typeof ipo.id === 'number' ? `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}` : FALLBACK_STOCK_LOGO} alt="Logo" className="w-full h-full object-contain rounded-full" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; }} />
                                                                         </div>
                                                                         <div className="flex-1 flex items-center justify-between space-x-3">
                                                                             <div className="font-black text-sm text-zinc-700 dark:text-zinc-200 leading-none">{ticker}</div>
@@ -1736,7 +1738,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                 <div className="flex items-center space-x-4">
                                                     <div className="w-20 h-20 bg-white rounded-full shadow-md border-4 border-zinc-200 dark:border-zinc-700 flex items-center justify-center p-1.5 shrink-0 relative overflow-hidden group/modalimg">
                                                         <div className="absolute inset-0 bg-zinc-100 animate-pulse transition-opacity duration-500 group-[.loaded]/modalimg:opacity-0 pointer-events-none rounded-full"></div>
-                                                        <img src={`https://e-ipo.co.id${selectedIpoDetails.links?.logo}`} alt={selectedIpoDetails.ticker} className="w-full h-full object-contain rounded-full opacity-0 transition-opacity duration-700 relative z-10" onLoad={(e) => { e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${selectedIpoDetails.ticker}&background=random&color=fff`; e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} />
+                                                        <img src={`https://e-ipo.co.id${selectedIpoDetails.links?.logo}`} alt={selectedIpoDetails.ticker} className="w-full h-full object-contain rounded-full opacity-0 transition-opacity duration-700 relative z-10" onLoad={(e) => { e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; e.target.classList.remove('opacity-0'); e.target.parentElement.classList.add('loaded'); }} />
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center space-x-3 mb-1">
@@ -2148,7 +2150,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                                                     <div>
                                                         <div className="flex items-center space-x-2 mb-1">
                                                             {notif.type !== 'system' && (
-                                                                <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-6 h-6 rounded-full object-cover bg-white shadow-md border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${notif.ticker?.substring(0, 2)}&background=random&color=fff`; }} />
+                                                                <img src={getStockLogo(notif.ticker)} alt={notif.ticker} className="w-6 h-6 rounded-full object-cover bg-white shadow-md border border-zinc-200 dark:border-zinc-700" onError={(e) => { e.target.onerror = null; e.target.src = FALLBACK_STOCK_LOGO; }} />
                                                             )}
                                                             <span className="px-3 py-1 rounded-lg text-[11px] font-black uppercase tracking-widest bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-md">{notif.ticker}</span>
                                                         </div>
