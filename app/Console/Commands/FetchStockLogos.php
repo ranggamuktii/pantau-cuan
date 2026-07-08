@@ -30,9 +30,9 @@ class FetchStockLogos extends Command
     {
         $this->info('Starting to fetch logos...');
         
-        // Ensure the directory exists
-        if (!Storage::disk('public')->exists('logos')) {
-            Storage::disk('public')->makeDirectory('logos');
+        $logoDir = public_path('logos');
+        if (!file_exists($logoDir)) {
+            mkdir($logoDir, 0755, true);
         }
 
         // We can either fetch all stocks from the DB or just the ones users own.
@@ -52,12 +52,13 @@ class FetchStockLogos extends Command
 
         foreach ($stocks as $stock) {
             $ticker = strtoupper(trim($stock->stock_code));
-            $path = "logos/{$ticker}.png";
+            $path = $logoDir . '/' . $ticker . '.png';
 
             // If it already exists, skip to save time (or optionally overwrite)
-            if (Storage::disk('public')->exists($path) && Storage::disk('public')->size($path) > 1000) {
+            if (file_exists($path) && filesize($path) > 1000) {
                 // assume valid if > 1kb
                 $bar->advance();
+                $successCount++; // Count skipped as success
                 continue;
             }
 
@@ -71,7 +72,7 @@ class FetchStockLogos extends Command
                 ])->get($url);
 
             if ($response->successful() && strlen($response->body()) > 1000) {
-                Storage::disk('public')->put($path, $response->body());
+                file_put_contents($path, $response->body());
                 $successCount++;
             } else {
                 // Try E-IPO as fallback
@@ -82,7 +83,7 @@ class FetchStockLogos extends Command
                     ])->get($fallbackUrl);
                     
                 if ($fallbackResponse->successful() && strlen($fallbackResponse->body()) > 1000) {
-                    Storage::disk('public')->put($path, $fallbackResponse->body());
+                    file_put_contents($path, $fallbackResponse->body());
                     $successCount++;
                 } else {
                     $failCount++;
