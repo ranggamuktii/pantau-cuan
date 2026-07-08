@@ -249,19 +249,20 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         const allIpos = [...(activeIpos || []), ...(ipoCalendar || [])];
         const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
         
+        const fallbackUiAvatar = `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=18181b&color=fff`;
+        
         if (ipo && typeof ipo.id === 'number') {
-            // Proxy e-ipo.co.id logos to avoid CORS issues when generating images
+            // Using wsrv.nl to bypass both e-ipo's WAF and canvas CORS issues cleanly
             const originalUrl = `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
-            return `/proxy-logo?url=${encodeURIComponent(originalUrl)}&ticker=${encodeURIComponent(ticker)}`;
+            return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&default=${encodeURIComponent(fallbackUiAvatar)}`;
         } else if (ipo && ipo.logo) {
             if (ipo.logo.includes('e-ipo.co.id')) {
-                return `/proxy-logo?url=${encodeURIComponent(ipo.logo)}&ticker=${encodeURIComponent(ticker)}`;
+                return `https://wsrv.nl/?url=${encodeURIComponent(ipo.logo)}&default=${encodeURIComponent(fallbackUiAvatar)}`;
             }
             return ipo.logo;
         }
         
-        // Fallback to ui-avatars
-        return `https://ui-avatars.com/api/?name=${ticker.substring(0, 2)}&background=random&color=fff`;
+        return fallbackUiAvatar;
     };
 
     const submitPriceUpdate = null; // Removed - price is display only now

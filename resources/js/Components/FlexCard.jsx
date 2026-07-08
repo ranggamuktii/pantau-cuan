@@ -24,10 +24,10 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
     return (
         <div ref={ref} className={`w-[400px] min-h-[640px] relative overflow-hidden bg-[#030303] text-white rounded-[2.5rem] font-sans flex flex-col p-10 border border-zinc-800/80 shadow-2xl`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
             
-            {/* Premium Background Gradients & Lighting */}
+            {/* Premium Background Gradients & Lighting (Replaced blur with radial gradients for html-to-image compatibility) */}
             <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5"></div>
-            <div className="absolute -top-32 -left-32 w-96 h-96 bg-emerald-500/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
-            <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-500/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen"></div>
+            <div className="absolute -top-32 -left-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/20 to-transparent rounded-full pointer-events-none"></div>
+            <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-teal-500/20 to-transparent rounded-full pointer-events-none"></div>
             
             {/* Minimalist Grid Pattern */}
             <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -72,7 +72,7 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                                 const isProfit = stock.percentage > 0;
                                 const isLoss = stock.percentage < 0;
                                 return (
-                                    <div key={i} className="flex flex-col justify-center px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-colors relative overflow-hidden">
+                                    <div key={i} className="flex flex-col justify-center px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] transition-colors relative overflow-hidden">
                                         <div className="flex flex-col space-y-2 relative z-10">
                                             <div className="flex items-center space-x-2">
                                                 {stock.logo && (
@@ -88,9 +88,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                                                 </span>
                                             </div>
                                         </div>
-                                        {/* Subtle background glow for profit/loss */}
-                                        {isProfit && <div className="absolute top-0 right-0 w-12 h-12 bg-emerald-500/10 blur-[10px] rounded-full translate-x-4 -translate-y-4"></div>}
-                                        {isLoss && <div className="absolute top-0 right-0 w-12 h-12 bg-rose-500/10 blur-[10px] rounded-full translate-x-4 -translate-y-4"></div>}
+                                        {/* Subtle background glow for profit/loss (Replaced blur with radial gradient) */}
+                                        {isProfit && <div className="absolute top-0 right-0 w-16 h-16 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/20 to-transparent rounded-full translate-x-4 -translate-y-4"></div>}
+                                        {isLoss && <div className="absolute top-0 right-0 w-16 h-16 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-rose-500/20 to-transparent rounded-full translate-x-4 -translate-y-4"></div>}
                                     </div>
                                 );
                             })}
