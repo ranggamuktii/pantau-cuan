@@ -2225,7 +2225,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
                             .map(code => {
                                 const data = stockMap[code];
                                 const pct = data.capital > 0 ? (data.profit / data.capital) * 100 : 0;
-                                return { code, percentage: pct, logo: getStockLogo(code) };
+                                return { code, percentage: pct, logo: getStockLogo(code), profit: data.profit };
                             })
                             // filter out 0% if you want, or just sort
                             .sort((a, b) => b.percentage - a.percentage);

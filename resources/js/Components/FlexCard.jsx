@@ -21,13 +21,57 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
     const textMuted = "text-zinc-400";
     const borderClass = "border-zinc-800";
 
+    const totalProfit = activeStocks?.reduce((acc, stock) => acc + (stock.profit || 0), 0) || 0;
+    
+    // Dynamic styles based on totalProfit
+    let statusConfig = {
+        title: "Cuan Maksimal!",
+        titleGradient: "from-emerald-300 via-teal-200 to-emerald-400",
+        badgeText: "All Time High",
+        badgeBg: "bg-emerald-500/10 border-emerald-500/20",
+        badgeTextClass: "text-emerald-400",
+        badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>,
+        glow1: "from-emerald-500/5 via-transparent to-teal-500/5",
+        glow2: "from-emerald-500/20",
+        glow3: "from-teal-500/20",
+        pulsePoint: "bg-emerald-500"
+    };
+
+    if (totalProfit < 0) {
+        statusConfig = {
+            title: "Sabar Bosku!",
+            titleGradient: "from-rose-300 via-red-200 to-rose-400",
+            badgeText: "Sedang Berdarah",
+            badgeBg: "bg-rose-500/10 border-rose-500/20",
+            badgeTextClass: "text-rose-400",
+            badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>,
+            glow1: "from-rose-500/5 via-transparent to-red-500/5",
+            glow2: "from-rose-500/20",
+            glow3: "from-red-500/20",
+            pulsePoint: "bg-rose-500"
+        };
+    } else if (totalProfit === 0 && activeStocks?.length === 0) {
+        statusConfig = {
+            title: "Mulai Investasi!",
+            titleGradient: "from-blue-300 via-indigo-200 to-blue-400",
+            badgeText: "Siap Cuan",
+            badgeBg: "bg-blue-500/10 border-blue-500/20",
+            badgeTextClass: "text-blue-400",
+            badgeIcon: <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>,
+            glow1: "from-blue-500/5 via-transparent to-indigo-500/5",
+            glow2: "from-blue-500/20",
+            glow3: "from-indigo-500/20",
+            pulsePoint: "bg-blue-500"
+        };
+    }
+
     return (
         <div ref={ref} className={`w-[400px] min-h-[640px] relative overflow-hidden bg-[#030303] text-white rounded-[2.5rem] font-sans flex flex-col p-10 border border-zinc-800/80 shadow-2xl`} style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
             
             {/* Premium Background Gradients & Lighting (Replaced blur with radial gradients for html-to-image compatibility) */}
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-teal-500/5"></div>
-            <div className="absolute -top-32 -left-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-500/20 to-transparent rounded-full pointer-events-none"></div>
-            <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-teal-500/20 to-transparent rounded-full pointer-events-none"></div>
+            <div className={`absolute inset-0 bg-gradient-to-br ${statusConfig.glow1}`}></div>
+            <div className={`absolute -top-32 -left-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ${statusConfig.glow2} to-transparent rounded-full pointer-events-none`}></div>
+            <div className={`absolute -bottom-32 -right-32 w-96 h-96 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] ${statusConfig.glow3} to-transparent rounded-full pointer-events-none`}></div>
             
             {/* Minimalist Grid Pattern */}
             <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -43,18 +87,18 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             {/* Main Stats */}
             <div className="relative z-10 flex-1 flex flex-col justify-center py-6">
                 <p className={`text-sm font-semibold text-zinc-400 mb-2 uppercase tracking-[0.2em] flex items-center`}>
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                    <span className={`w-2 h-2 rounded-full ${statusConfig.pulsePoint} mr-2 animate-pulse`}></span>
                     Portofolio Tracker
                 </p>
                 
                 <div className="flex flex-col items-start">
-                    <span className="text-4xl font-black tracking-tighter leading-none mb-3 text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-400 drop-shadow-sm">
-                        Cuan Maksimal!
+                    <span className={`text-4xl font-black tracking-tighter leading-none mb-3 text-transparent bg-clip-text bg-gradient-to-r ${statusConfig.titleGradient} drop-shadow-sm`}>
+                        {statusConfig.title}
                     </span>
                     
-                    <div className="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-bold mt-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
-                        <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-                        All Time High
+                    <div className={`inline-flex items-center px-4 py-2 rounded-xl border ${statusConfig.badgeBg} ${statusConfig.badgeTextClass} text-sm font-bold mt-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]`}>
+                        {statusConfig.badgeIcon}
+                        {statusConfig.badgeText}
                     </div>
                 </div>
             </div>
