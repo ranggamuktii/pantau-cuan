@@ -282,7 +282,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
 
     const getStockLogo = (ticker) => {
         if (!ticker) return '/fallback-stock.svg';
-        return `/storage/logos/${ticker}.png`;
+        return `/logos/${ticker}.png`;
     };
 
     const getBadgeColor = (type, text, isDropdown = false) => {
