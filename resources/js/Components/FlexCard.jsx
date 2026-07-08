@@ -7,147 +7,173 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
     let statusConfig = {
         title: "CUAN",
         titleHighlight: "MAKSIMAL!",
-        highlightColor: "text-[#22c55e]", // emerald-500
+        highlightColor: "#22c55e",
         subtitle: "Disiplin hari ini, bebas finansial nanti.",
-        iconBg: "bg-[#052e16]", // emerald-950
-        iconColor: "text-[#22c55e]"
+        accentDark: "#052e16",
     };
 
     if (totalProfit < 0) {
         statusConfig = {
             title: "SABAR",
             titleHighlight: "BOSKU!",
-            highlightColor: "text-[#ef4444]", // red-500
+            highlightColor: "#ef4444",
             subtitle: "Tetap tenang, badai pasti berlalu.",
-            iconBg: "bg-[#450a0a]", // red-950
-            iconColor: "text-[#ef4444]"
+            accentDark: "#450a0a",
         };
     } else if (totalProfit === 0 && activeStocks?.length === 0) {
         statusConfig = {
             title: "MULAI",
             titleHighlight: "INVESTASI!",
-            highlightColor: "text-[#3b82f6]", // blue-500
+            highlightColor: "#3b82f6",
             subtitle: "Waktunya alokasi modal bosku.",
-            iconBg: "bg-[#172554]", // blue-950
-            iconColor: "text-[#3b82f6]"
+            accentDark: "#172554",
         };
     }
 
-    // Format current date
-    const dateOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-    const formattedDate = new Intl.DateTimeFormat('id-ID', dateOptions).format(new Date());
+    // Generate a pseudo-random but deterministic sparkline path for each stock
+    const getSparklinePath = (code, isUp) => {
+        let hash = 0;
+        for (let i = 0; i < code.length; i++) hash = code.charCodeAt(i) + ((hash << 5) - hash);
+        const seed = Math.abs(hash);
+        const points = [];
+        for (let i = 0; i <= 6; i++) {
+            const noise = ((seed * (i + 1) * 7) % 20) - 10;
+            const baseY = isUp ? 25 - (i * 3.5) + noise * 0.3 : 5 + (i * 3.5) + noise * 0.3;
+            points.push(`${(i / 6) * 100},${Math.max(2, Math.min(28, baseY))}`);
+        }
+        return `M${points.join(' L')}`;
+    };
 
     return (
         <div 
             ref={ref} 
-            className="w-[400px] min-h-[640px] relative overflow-hidden bg-[#0A0D14] text-white flex flex-col p-8 pb-6 font-sans" 
-            style={{ fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}
+            className="w-[400px] min-h-[640px] relative overflow-hidden text-white flex flex-col font-sans" 
+            style={{ 
+                fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                background: '#0A0D14'
+            }}
         >
-            {/* Header: Logo and App Name */}
-            <div className="flex items-center space-x-3 mb-10">
-                <div className={`w-10 h-10 ${statusConfig.iconBg} rounded-xl flex items-center justify-center`}>
-                    <svg className={`w-6 h-6 ${statusConfig.iconColor}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L12 12l3 3 5-5m0 0h-4m4 0v4M4 17h.01" />
-                    </svg>
+            {/* Background Pattern: Subtle dot grid */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{
+                backgroundImage: 'radial-gradient(circle, #ffffff 0.8px, transparent 0.8px)',
+                backgroundSize: '20px 20px',
+            }}></div>
+
+            {/* Background glow orb top-right */}
+            <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full pointer-events-none" style={{
+                background: `radial-gradient(circle, ${statusConfig.highlightColor}15 0%, transparent 70%)`,
+            }}></div>
+            
+            {/* Background glow orb bottom-left */}
+            <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full pointer-events-none" style={{
+                background: `radial-gradient(circle, ${statusConfig.highlightColor}10 0%, transparent 70%)`,
+            }}></div>
+
+            {/* Content */}
+            <div className="relative z-10 flex flex-col flex-1 p-8 pb-8">
+                {/* Header: Logo and App Name */}
+                <div className="flex items-center space-x-3 mb-10">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: statusConfig.accentDark }}>
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke={statusConfig.highlightColor}>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 17L12 12l3 3 5-5m0 0h-4m4 0v4M4 17h.01" />
+                        </svg>
+                    </div>
+                    <div className="flex space-x-1.5 font-extrabold tracking-[0.15em] text-[13px] uppercase">
+                        <span className="text-white/90">PANTAU</span>
+                        <span style={{ color: statusConfig.highlightColor }}>CUAN</span>
+                    </div>
                 </div>
-                <div className="flex space-x-1 font-bold tracking-widest text-[13px] uppercase">
-                    <span className="text-white">PANTAU</span>
-                    <span className={statusConfig.highlightColor}>CUAN</span>
+
+                {/* Main Title Section */}
+                <div className="mb-8">
+                    <h1 className="text-[2.5rem] font-black tracking-tight leading-[1.1] mb-2.5">
+                        <span className="text-white">{statusConfig.title} </span>
+                        <span style={{ color: statusConfig.highlightColor }}>{statusConfig.titleHighlight}</span>
+                    </h1>
+                    <p className="text-[15px] font-medium" style={{ color: '#8B95A5' }}>{statusConfig.subtitle}</p>
                 </div>
-            </div>
 
-            {/* Main Title Section */}
-            <div className="mb-8">
-                <h1 className="text-4xl font-black tracking-tight mb-2">
-                    <span className="text-white">{statusConfig.title} </span>
-                    <span className={statusConfig.highlightColor}>{statusConfig.titleHighlight}</span>
-                </h1>
-                <p className="text-[#8B95A5] text-[15px] font-medium">{statusConfig.subtitle}</p>
-            </div>
+                {/* Thin accent line */}
+                <div className="w-12 h-[3px] rounded-full mb-6" style={{ background: statusConfig.highlightColor, opacity: 0.5 }}></div>
 
-            {/* Stocks List */}
-            <div className="flex-1 flex flex-col space-y-3 relative z-10">
-                {activeStocks && activeStocks.length > 0 ? (
-                    activeStocks.slice(0, 5).map((stock, i) => {
-                        const isProfit = stock.percentage > 0;
-                        const isLoss = stock.percentage < 0;
-                        
-                        return (
-                            <div key={i} className="flex items-center justify-between p-4 bg-[#111621] rounded-2xl border border-[#1C2333] shadow-sm relative overflow-hidden">
-                                
-                                {/* Subtle internal glow */}
-                                {isProfit && <div className="absolute top-0 right-0 w-32 h-32 bg-[#22c55e] opacity-[0.03] blur-2xl pointer-events-none rounded-full translate-x-10 -translate-y-10"></div>}
-                                {isLoss && <div className="absolute top-0 right-0 w-32 h-32 bg-[#ef4444] opacity-[0.03] blur-2xl pointer-events-none rounded-full translate-x-10 -translate-y-10"></div>}
-
-                                <div className="flex items-center space-x-3 z-10 w-2/5">
-                                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0 border border-white/10 overflow-hidden">
+                {/* Stocks List */}
+                <div className="flex-1 flex flex-col space-y-2.5">
+                    {activeStocks && activeStocks.length > 0 ? (
+                        activeStocks.slice(0, 6).map((stock, i) => {
+                            const isProfit = stock.percentage > 0;
+                            const isLoss = stock.percentage < 0;
+                            const sparkColor = isProfit ? '#22c55e' : isLoss ? '#ef4444' : '#4B5563';
+                            
+                            return (
+                                <div key={i} className="flex items-center p-3.5 rounded-2xl relative overflow-hidden" style={{
+                                    background: '#111621',
+                                    border: '1px solid #1C2333',
+                                }}>
+                                    {/* Logo */}
+                                    <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0 overflow-hidden mr-3" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
                                         <img 
-                                            src={stock.logo + (stock.logo.includes('?') ? '&' : '?') + 'cors=1'} 
-                                            crossOrigin="anonymous" 
+                                            src={stock.logo} 
                                             alt={stock.code} 
                                             className="w-full h-full object-contain" 
                                             onError={(e) => { e.target.onerror = null; e.target.src = '/fallback-stock.svg'; }} 
                                         />
                                     </div>
-                                    <div className="flex flex-col min-w-0">
-                                        <span className="text-base font-bold text-white truncate">{stock.code}</span>
-                                        <span className="text-[11px] text-[#8B95A5] truncate font-medium">{stock.code} Corp.</span>
+                                    
+                                    {/* Ticker & Name */}
+                                    <div className="flex flex-col min-w-0 w-20">
+                                        <span className="text-[15px] font-extrabold text-white truncate tracking-wide">{stock.code}</span>
                                     </div>
-                                </div>
 
-                                {/* Dummy Sparkline Area */}
-                                <div className="flex-1 h-8 flex items-center justify-center z-10 opacity-70 px-2">
-                                    {isProfit ? (
-                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#22c55e]">
-                                            <path d="M0,25 Q15,22 25,18 T45,15 T60,8 T80,5 T100,2" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    {/* Sparkline */}
+                                    <div className="flex-1 h-7 flex items-center justify-center px-3">
+                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full" style={{ opacity: 0.7 }}>
+                                            <path d={getSparklinePath(stock.code, isProfit)} fill="none" stroke={sparkColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
-                                    ) : isLoss ? (
-                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#ef4444]">
-                                            <path d="M0,5 Q15,8 25,12 T45,15 T60,22 T80,25 T100,28" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    ) : (
-                                        <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-full text-[#4B5563]">
-                                            <path d="M0,15 L20,14 L40,16 L60,15 L80,15 L100,16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    )}
-                                </div>
+                                    </div>
 
-                                {/* Badge */}
-                                <div className="z-10 w-24 flex justify-end">
-                                    <div className={`flex items-center space-x-1.5 px-2.5 py-1.5 rounded-lg border font-bold text-xs tabular-nums
-                                        ${isProfit ? 'bg-[#052e16] text-[#22c55e] border-[#064e3b]' : 
-                                          isLoss ? 'bg-[#450a0a] text-[#ef4444] border-[#7f1d1d]' : 
-                                          'bg-[#1C2333] text-[#8B95A5] border-[#2A3441]'}`}
-                                    >
+                                    {/* Badge */}
+                                    <div className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg font-bold text-xs tabular-nums shrink-0" style={{
+                                        background: isProfit ? '#052e16' : isLoss ? '#450a0a' : '#1C2333',
+                                        color: isProfit ? '#22c55e' : isLoss ? '#ef4444' : '#8B95A5',
+                                        border: `1px solid ${isProfit ? '#064e3b' : isLoss ? '#7f1d1d' : '#2A3441'}`,
+                                    }}>
                                         {isProfit ? (
                                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M7 17L17 7m0 0H8m9 0v9" /></svg>
                                         ) : isLoss ? (
-                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 17L7 7m10 10V8m0 9H8" /></svg>
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M17 7l-10 10m0 0h9m-9 0V8" /></svg>
                                         ) : (
-                                            <span className="text-[10px]">−</span>
+                                            <span>−</span>
                                         )}
                                         <span>
-                                            {isProfit || isLoss ? Math.abs(stock.percentage).toFixed(1) + '%' : '0%'}
+                                            {isProfit ? '+' : ''}{stock.percentage % 1 === 0 ? stock.percentage : stock.percentage.toFixed(1)}%
                                         </span>
                                     </div>
                                 </div>
+                            );
+                        })
+                    ) : (
+                        <div className="flex-1 flex items-center justify-center flex-col text-center py-10" style={{ opacity: 0.4 }}>
+                            <svg className="w-12 h-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="#8B95A5"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
+                            <p className="text-sm font-medium" style={{ color: '#8B95A5' }}>Belum ada riwayat saham.</p>
+                        </div>
+                    )}
+                </div>
 
-                            </div>
-                        );
-                    })
-                ) : (
-                    <div className="flex-1 flex items-center justify-center flex-col text-center opacity-50 py-10">
-                        <svg className="w-12 h-12 mb-3 text-[#8B95A5]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
-                        <p className="text-sm font-medium text-[#8B95A5]">Belum ada riwayat saham.</p>
+                {/* User Footer */}
+                <div className="mt-6 pt-5 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full overflow-hidden" style={{ border: '2px solid rgba(255,255,255,0.15)' }}>
+                            <img 
+                                src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'I')}&background=18181b&color=fff&size=64&bold=true`}
+                                alt="Avatar" 
+                                className="w-full h-full object-cover" 
+                            />
+                        </div>
+                        <span className="text-sm font-bold text-white/80 tracking-wide">{user?.name || 'Investor'}</span>
                     </div>
-                )}
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.15em]" style={{ color: '#4B5563' }}>pantaucuan.site</span>
+                </div>
             </div>
-
-            {/* Footer */}
-            <div className="mt-8 pt-4 flex justify-center items-center text-center w-full">
-                <p className="text-[#64748B] text-xs font-medium tracking-wide">Data per {formattedDate}</p>
-            </div>
-            
         </div>
     );
 });
