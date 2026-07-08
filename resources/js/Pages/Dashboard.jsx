@@ -252,18 +252,12 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
         
         if (ipo && typeof ipo.id === 'number') {
-            const originalUrl = `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
-            return `/proxy-logo?url=${encodeURIComponent(originalUrl)}`;
+            return `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
         } else if (ipo && ipo.logo) {
-            if (ipo.logo.includes('e-ipo.co.id')) {
-                return `/proxy-logo?url=${encodeURIComponent(ipo.logo)}`;
-            }
             return ipo.logo;
         }
         
         // If not in active IPOs, it's likely already listed. Pull from Stockbit!
-        // We return this DIRECTLY (without proxy) because Stockbit CDN supports CORS 
-        // and using a PHP proxy gets blocked by their Cloudflare protection.
         return `https://assets.stockbit.com/logos/companies/${ticker}.png`;
     };
 
