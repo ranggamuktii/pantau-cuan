@@ -165,6 +165,7 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
             const dataUrl = await toPng(flexCardRef.current, { 
                 cacheBust: true, 
                 quality: 0.95,
+                useCORS: true, // Allow fetching cross-origin images (like Stockbit) directly
                 fontEmbedCSS: '' // bypass cross-origin fonts issue
             });
             setFlexImageUrl(dataUrl);
@@ -262,8 +263,9 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         }
         
         // If not in active IPOs, it's likely already listed. Pull from Stockbit!
-        const stockbitUrl = `https://assets.stockbit.com/logos/companies/${ticker}.png`;
-        return `/proxy-logo?url=${encodeURIComponent(stockbitUrl)}`;
+        // We return this DIRECTLY (without proxy) because Stockbit CDN supports CORS 
+        // and using a PHP proxy gets blocked by their Cloudflare protection.
+        return `https://assets.stockbit.com/logos/companies/${ticker}.png`;
     };
 
     const submitPriceUpdate = null; // Removed - price is display only now
