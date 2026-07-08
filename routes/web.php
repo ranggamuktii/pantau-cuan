@@ -44,8 +44,8 @@ Route::get('/proxy-logo', function (\Illuminate\Http\Request $request) {
     // Fallback if e-ipo fails (e.g. 403, 404)
     // We generate a simple SVG directly so it NEVER fails and requires no external HTTP request!
     parse_str(parse_url($url, PHP_URL_QUERY), $query);
-    $id = $query['id'] ?? 'IP';
-    $name = strtoupper(substr($id, 0, 2) ?: 'IP');
+    $ticker = $request->query('ticker') ?? 'IP';
+    $name = strtoupper(substr($ticker, 0, 2) ?: 'IP');
     
     $svg = '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#18181b"/><text x="50" y="50" font-family="sans-serif" font-size="40" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="central">' . $name . '</text></svg>';
 

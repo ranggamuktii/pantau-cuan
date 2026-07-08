@@ -252,10 +252,10 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         if (ipo && typeof ipo.id === 'number') {
             // Proxy e-ipo.co.id logos to avoid CORS issues when generating images
             const originalUrl = `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
-            return `/proxy-logo?url=${encodeURIComponent(originalUrl)}`;
+            return `/proxy-logo?url=${encodeURIComponent(originalUrl)}&ticker=${encodeURIComponent(ticker)}`;
         } else if (ipo && ipo.logo) {
             if (ipo.logo.includes('e-ipo.co.id')) {
-                return `/proxy-logo?url=${encodeURIComponent(ipo.logo)}`;
+                return `/proxy-logo?url=${encodeURIComponent(ipo.logo)}&ticker=${encodeURIComponent(ticker)}`;
             }
             return ipo.logo;
         }

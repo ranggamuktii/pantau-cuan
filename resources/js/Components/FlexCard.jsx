@@ -63,9 +63,9 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
             <div className="relative z-10 mt-auto">
                 {activeStocks && activeStocks.length > 0 && (
                     <div className="mb-10">
-                        <div className="flex items-center mb-4 text-zinc-400">
-                            <svg className="w-4 h-4 mr-2 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                            <p className="text-xs font-bold uppercase tracking-[0.15em]">Koleksi IPO</p>
+                        <div className="flex items-center mb-4 text-zinc-400/90">
+                            <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                            <p className="text-xs font-bold uppercase tracking-widest">Koleksi IPO</p>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                             {activeStocks.slice(0, 8).map((stock, i) => {
@@ -73,14 +73,14 @@ const FlexCard = forwardRef(({ user, tier, activeStocks, isDarkMode = true }, re
                                 const isLoss = stock.percentage < 0;
                                 return (
                                     <div key={i} className="flex flex-col justify-center px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-colors relative overflow-hidden">
-                                        <div className="flex items-center justify-between mb-0 relative z-10">
+                                        <div className="flex flex-col space-y-2 relative z-10">
                                             <div className="flex items-center space-x-2">
                                                 {stock.logo && (
-                                                    <img src={stock.logo} alt={stock.code} className="w-6 h-6 rounded-full border border-white/20 object-cover bg-white" />
+                                                    <img src={stock.logo} alt={stock.code} className="w-7 h-7 rounded-full border border-white/20 object-cover bg-white" />
                                                 )}
                                                 <span className="text-base font-black text-white">{stock.code}</span>
                                             </div>
-                                            <div className={`flex items-center space-x-1 px-2.5 py-1 rounded-lg ${isProfit ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : isLoss ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-zinc-800/80 text-zinc-300 border border-zinc-700'} font-black text-xs`}>
+                                            <div className={`inline-flex self-start items-center space-x-1 px-2.5 py-1 rounded-lg ${isProfit ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : isLoss ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-zinc-800/80 text-zinc-300 border border-zinc-700'} font-black text-xs`}>
                                                 {isProfit && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
                                                 {isLoss && <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>}
                                                 <span>
