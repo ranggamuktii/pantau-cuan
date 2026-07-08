@@ -250,21 +250,22 @@ export default function Dashboard({ auth, summary, charts, accountSids, emitenLi
         if (!ticker) return null;
         const allIpos = [...(activeIpos || []), ...(ipoCalendar || [])];
         const ipo = allIpos.find(i => i.ticker === ticker || i.title?.includes(ticker));
+        const absoluteFallbackUrl = typeof window !== 'undefined' ? `${window.location.origin}${FALLBACK_STOCK_LOGO}` : '';
         
         if (ipo && typeof ipo.id === 'number') {
             // Using wsrv.nl to bypass both e-ipo's WAF and canvas CORS issues cleanly
             const originalUrl = `https://e-ipo.co.id/id/pipeline/get-logo?id=${ipo.id}`;
-            const absoluteFallbackUrl = typeof window !== 'undefined' ? `${window.location.origin}${FALLBACK_STOCK_LOGO}` : '';
             return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}&default=${encodeURIComponent(absoluteFallbackUrl)}`;
         } else if (ipo && ipo.logo) {
             if (ipo.logo.includes('e-ipo.co.id')) {
-                const absoluteFallbackUrl = typeof window !== 'undefined' ? `${window.location.origin}${FALLBACK_STOCK_LOGO}` : '';
                 return `https://wsrv.nl/?url=${encodeURIComponent(ipo.logo)}&default=${encodeURIComponent(absoluteFallbackUrl)}`;
             }
             return ipo.logo;
         }
         
-        return FALLBACK_STOCK_LOGO;
+        // If not in active IPOs, it's likely already listed. Pull from Stockbit!
+        const stockbitUrl = `https://assets.stockbit.com/logos/companies/${ticker}.png`;
+        return `https://wsrv.nl/?url=${encodeURIComponent(stockbitUrl)}&default=${encodeURIComponent(absoluteFallbackUrl)}`;
     };
 
     const submitPriceUpdate = null; // Removed - price is display only now
